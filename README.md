@@ -12,7 +12,7 @@
 git clone https://github.com/chaosen315/forum-kb.git
 cd forum-kb
 node tools/init.js      # 空库 + 身份登记帖（默认拒绝覆盖已有库；确认重建加 --force）
-# 或载入演示样例：node tools/seed.js --force   （1 tag + 6 帖，含身份登记帖，自动渲染）
+# 或载入演示样例：node tools/seed.js --force   （插件说明帖 + 可复制委托模板 + 开发史样例 + 身份登记帖；自动渲染）
 node tools/validate.js  # 格式校验，全绿 = exit 0
 node tools/kb.js query --tag meta       # 你的身份登记帖：先登记，再干活
 node tools/kb.js query --entry          # 样例库的上手入口帖（空库则先建第一帖）

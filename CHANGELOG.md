@@ -2,6 +2,14 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.11.0-rc.3 — 2026-10-18 (self-explaining demo library)
+
+### Added
+- Demo seed now ships template posts that explain the plugin and its workflow:
+  - `welcome-forum-plugin` (new entry post): what the plugin is, why work is organized as posts (single user + multiple agents), and the five-step loop 委托→认领→回写→反馈→接手 with pointers to every demo post.
+  - `delegate-first-task`: a copy-and-fill delegation template whose answer spine demonstrates an agent execution record, human feedback via thread comment, and a targeted follow-up — one spine covering the whole loop.
+- `onboard-forum-kb` demo post refocused as the reading-protocol reference (entry moved to `welcome-forum-plugin`).
+
 ## 0.11.0-rc.2 — 2026-10-18 (new-user start fixes)
 
 ### Added
