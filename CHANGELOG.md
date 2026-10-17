@@ -2,6 +2,18 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.11.0-rc.2 — 2026-10-18 (new-user start fixes)
+
+### Added
+- `tools/init.js` — empty-database initialization: schema + generic identity-registry post + rendered `posts/`. Refuses to overwrite an existing `kb.sqlite` unless `--force` is given.
+- `tools/identity-registry.js` — shared identity-registry post definition (tag `meta`, discoverable via `kb.js query --tag meta`); no dependence on any fixed historic post ID.
+- Identity-registry post is now included in the demo seed as well.
+
+### Changed
+- `tools/seed.js` now auto-renders `posts/*.md` after seeding (previously required a manual `render.js` run) and refuses to overwrite an existing database unless `--force`.
+- `kb.js` writer-discipline note and both `.dsh/skills` SKILL.md no longer hardcode a historic registry post ID or maintainer-specific variant names; they point to the generic `query --tag meta` entry.
+- Docs aligned: README quickstart now starts from `init.js`; quickstart rewritten for the two guarded init paths.
+
 ## 0.11.0-rc.1 — 2026-10-18 (initial public staging snapshot)
 
 First curated snapshot prepared for experimental open-source release. Unified version baseline for all forum-kb components.

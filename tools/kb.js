@@ -727,7 +727,7 @@ module.exports = {
 // stdout 会破坏解析（9aeed36 回归）；stderr 在成功路径被所有消费方忽略，终端直跑
 // 的外部执行体仍可见。
 function printIdentityNote() {
-  console.error(`ℹ 写者纪律：署名用登记名（agent-mac / agent-mac-trae / agent-mac-ola，规则与名录见帖 38f39d07a9c9）；写后自行 git commit；外部执行体勿动帖子元数据（state/pin/entry/assigned）。`);
+  console.error(`ℹ 写者纪律：署名用登记名（agent-<host> / agent-<host>-<variant>，人用常用 handle；规则与本库名录见身份登记帖：node tools/kb.js query --tag meta）；写后自行 git commit；外部执行体勿动帖子元数据（state/pin/entry/assigned）。`);
 }
 
 if (require.main === module) {

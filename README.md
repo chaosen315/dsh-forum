@@ -11,11 +11,11 @@
 ```bash
 git clone https://github.com/chaosen315/forum-kb.git
 cd forum-kb
-node tools/seed.js      # 建库 + 载入五帖样例（注意：会删除当前目录已有 kb.sqlite 重建）
-node tools/render.js    # 从 kb.sqlite 生成 posts/*.md
+node tools/init.js      # 空库 + 身份登记帖（默认拒绝覆盖已有库；确认重建加 --force）
+# 或载入演示样例：node tools/seed.js --force   （1 tag + 6 帖，含身份登记帖，自动渲染）
 node tools/validate.js  # 格式校验，全绿 = exit 0
-node tools/kb.js query --entry          # 找到上手入口帖
-node tools/kb.js view <post-id>         # 读一帖（默认只装阅读边界）
+node tools/kb.js query --tag meta       # 你的身份登记帖：先登记，再干活
+node tools/kb.js query --entry          # 样例库的上手入口帖（空库则先建第一帖）
 ```
 
 命令面速览与认领/交接工作流见 [docs/quickstart.md](docs/quickstart.md)。
@@ -73,9 +73,9 @@ KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选
 ## 已知边界（首发快照）
 
 - 运行时零第三方 npm 依赖（CLI 零依赖；三个插件包只声明 peerDependencies，由 DSH 宿主供给）→ 安装免构建。**从源码重建**目前需要 `@deepseek-ai/dsh-tools` / `@deepseek-ai/dsh-typert-generator` / `@deepseek-ai/dsh-typert-protocol@0.2.0-rc.2`（构建期依赖，尚未全部在公共 npm 提供），源码构建暂不承诺。
-- 样例库（`tools/seed.js`）暂不含身份登记帖，身份机制通用化在路线图中（R3）。
 - 已验收组合：macOS（arm64）+ Node 25.8.0 + DSH 0.2.0-rc.2。其余平台/版本组合未验证，欢迎反馈。
 - `dsh-tool-forum-kb` 为纯 JS 源码（`lib/index.js` 即源码，无构建步骤）；host 与 client-ui 由 `src/` + tsdown 构建出 `lib/`（配方随库）。
+- DSH 插件在宿主中的端到端注册接线与验证脚本在路线图（R4）中补齐。
 
 ## License
 

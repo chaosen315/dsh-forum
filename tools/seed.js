@@ -1,10 +1,18 @@
-// 建库 + 载入样例 KB（1 tag「forum-kb」、5 帖）。可重复运行：先删旧库重建。
+// 载入演示样例 KB（1 tag「forum-kb」+ 5 帖 + 身份登记帖）。结束时自动渲染 posts/。
+// 默认拒绝覆盖已有 kb.sqlite；确认重建加 --force。要空库请用 tools/init.js。
 const path = require('node:path');
 const fs = require('node:fs');
 const { DatabaseSync } = require('node:sqlite');
+const { renderAll } = require('./render.js');
+const identityPost = require('./identity-registry.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const DB_PATH = path.join(ROOT, 'kb.sqlite');
+const force = process.argv.includes('--force');
+if (fs.existsSync(DB_PATH) && !force) {
+  console.error(`✗ 已存在 ${DB_PATH}，seed 未做任何改动（seed 会重建整库）。载入样例请加 --force；要空库请用 node tools/init.js。`);
+  process.exit(1);
+}
 if (fs.existsSync(DB_PATH)) fs.rmSync(DB_PATH);
 const db = new DatabaseSync(DB_PATH);
 db.exec(fs.readFileSync(path.join(ROOT, 'schema.sql'), 'utf8'));
@@ -114,4 +122,8 @@ post({
   ],
 });
 
-console.log('seeded kb.sqlite');
+post(identityPost(T));
+
+renderAll(db, path.join(ROOT, 'posts'));
+console.log('seeded demo KB：6 帖（5 帖样例 + identity-registry），posts/*.md 已渲染');
+console.log('下一步：node tools/kb.js query --entry    # 上手入口帖');

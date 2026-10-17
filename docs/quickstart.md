@@ -2,24 +2,24 @@
 
 目标：5 分钟内建好自己的知识库、写入第一帖、完成一次「认领 → 交接」。
 
-> ⚠️ `node tools/seed.js` 会**删除当前目录已有的 `kb.sqlite` 重建**。要在空目录里试跑；要保留数据请先备份，或跳过 seed 直接看「接入已有库」。
+> 两个初始化工具（`init.js` / `seed.js`）都**默认拒绝覆盖已有 `kb.sqlite`**——已有数据不会被动碰；确认重建才加 `--force`。
 
 ## 1. 建库（两种方式）
 
 ```bash
-# 方式 A：样例库（1 个 tag「forum-kb」+ 5 帖，用于快速理解格式与工具面）
-node tools/seed.js && node tools/render.js
+# 方式 A：空库 + 身份登记帖（推荐的新用户起点）
+node tools/init.js
 
-# 方式 B：空库（自己从第一帖开始；当前版本请先跑 seed 再删除样例帖，或等待 R3 的空库 init）
-#   临时做法：
-node tools/seed.js && node tools/kb.js state <样例帖id> --state archived
+# 方式 B：演示样例库（1 个 tag「forum-kb」+ 5 帖 + 身份登记帖；结束时自动渲染）
+node tools/seed.js --force
 ```
+
+初始化后先登记身份：`node tools/kb.js query --tag meta` 打开身份登记帖，按帖内规则新增一条你的登记 answer。
 
 ## 2. 校验与读取
 
 ```bash
-node tools/render.js                    # seed 之后先渲染（kb.js 写帖会自动渲染，seed 不会）
-node tools/validate.js                  # 全绿 = exit 0
+node tools/validate.js                  # 全绿 = exit 0（init/seed 已自动渲染；手动补渲染跑 node tools/render.js）
 node tools/kb.js query --entry          # 上手入口帖
 node tools/kb.js query --tag forum-kb   # 按标签列帖（列表层，无正文）
 node tools/kb.js view <post-id>         # 读阅读边界：summary + query + current
