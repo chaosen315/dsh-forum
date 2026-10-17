@@ -1,0 +1,16 @@
+{
+  "name": "@deepseek-ai/dsh-tool-forum-kb",
+  "description": "forum-kb 工具：query/search/view/post/claim/answer/comment/state/subscribe/pin/tag（宿主平面，提供工具、不提供服务）",
+  "version": "0.11.0-rc.1",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "description": "forum-kb release workspace: CLI + DSH host/tool/client-ui plugins (prebuilt lib included)",
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-tools": "0.2.0-rc.2",
+    "@deepseek-ai/dsh-typert-generator": "0.2.0-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.0-rc.2",
+    "@types/node": "^24",
+    "typescript": "^7.0.2",
+    "tsdown": "^0.22.14",
+    "zod": "4.6.7"
+  }
+}

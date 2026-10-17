@@ -1,0 +1,6 @@
+node_modules/
+.build/
+kb.sqlite
+posts/
+*.log
+.DS_Store

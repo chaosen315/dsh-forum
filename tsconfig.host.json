@@ -1,0 +1,23 @@
+{
+  // typert 分析器的 host face 聚合配置：WorkspaceTypertGenerator 以本文件为
+  // 唯一 program seed（typertPlugin faces:['host']），references 即 face 成员。
+  // 注意：包目录必须在 <root>/packages/ 之下（分析器硬编码）；纯 JS 的
+  // dsh-tool-forum-kb 无 tsconfig，不进 references。
+  //
+  // dsh-typert-protocol 是【vendored 注册成员】（从本机 DSH 安装复制的 lib 产物）：
+  //  - isTypeMetaSymbol 要求 @Remote / TypertRemoteService 的声明落在已注册
+  //    workspace 包内（上游 monorepo 里它本就是成员）；
+  //  - paths 把包名解析到薄壳 src/index.ts（= sourcePathForExport 的落点），
+  //    checker 才能枚举出它的 exports。它没有 ./typert export，discover 会把
+  //    它排除在产物发射之外。
+  "compilerOptions": {
+    "paths": {
+      "@deepseek-ai/dsh-typert-protocol": ["./packages/dsh-typert-protocol/src/index.ts"]
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "packages/dsh-typert-protocol" },
+    { "path": "packages/dsh-forum-kb" }
+  ]
+}

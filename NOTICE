@@ -1,0 +1,32 @@
+# NOTICE
+
+forum-kb
+Copyright (c) 2026 chasen0315
+License: MIT (see LICENSE)
+
+## Third-party components
+
+This repository depends on the following third-party packages. They are not
+vendored, modified, or redistributed in this repository; each keeps its own
+license and source of distribution.
+
+Runtime (peer dependencies, provided by the DSH host at runtime):
+
+- @deepseek-ai/dsh — MIT — https://www.npmjs.com/package/@deepseek-ai/dsh
+- @deepseek-ai/cordis — MIT
+- @deepseek-ai/dsh-agent / dsh-llm / dsh-typert-protocol / dsh-tools — MIT / BSD-3-Clause (per upstream package metadata)
+- zod — MIT
+- react — MIT
+
+Build-time (devDependencies of the workspace, see package.json / pnpm-lock.yaml):
+
+- typescript — Apache-2.0
+- tsdown — MIT
+- dompurify, marked — (client-ui devDependencies, per upstream metadata)
+- @types/node, @types/react — MIT
+
+## Provenance
+
+Initial public staging snapshot (v0.11.0-rc.1, 2026-10-18), curated from the
+maintainer's private working repository. Personal knowledge-base data
+(kb.sqlite, posts/) is not included by design. All demo content is fictional.
