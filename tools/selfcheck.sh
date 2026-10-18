@@ -19,8 +19,13 @@ NV=$(node -e "const[v]=process.versions.node.split('.').map(Number);console.log(
 
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/fkb-selfchk.XXXXXX") || fail "mktemp"
 trap 'rm -rf "$WORK"' EXIT
-git archive HEAD | tar xf - -C "$WORK" || cp -R ./"$ROOT"/. "$WORK"/ 2>/dev/null || true
+git archive HEAD | tar xf - -C "$WORK" 2>/dev/null || cp -R "$ROOT"/. "$WORK"/ 2>/dev/null || true
 [ -f "$WORK/tools/kb.js" ] || cp -R "$ROOT"/. "$WORK"/
+[ -f "$WORK/tools/kb.js" ] || fail "无法构建测试副本"
+# 自清理沙箱：目录里可能带着使用中的 kb.sqlite/posts（解包目录或正在使用的库），
+# 不清掉会让 step 1 的 init 撞上覆盖保护而误报 FAIL（保护本身是对的）。
+rm -f "$WORK/kb.sqlite"
+rm -rf "$WORK/posts"
 cd "$WORK" || exit 1
 
 echo "-- 1. 空库 init（默认拒绝覆盖 + --force 重建）"
