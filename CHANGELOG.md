@@ -2,6 +2,20 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.20.0-rc.3 — 2026-10-18 (release materials)
+
+### Added
+- `tools/selfcheck.sh` — one-command automated verification (init no-overwrite, demo integrity, entry/identity, claim-chain single-root regression incl. rc.2 fix, render idempotency, overwrite guards).
+- `tools/make-release.sh` — release tarball + per-file sha256 manifest + checksum.
+- `docs/demo.md` — short demo: fully reproducible CLI walkthrough (A) and the R4 real-agent collaboration case (B), explicitly separated.
+- `docs/LIMITATIONS.md` — honest platform/feature/cost boundaries.
+- `CONTRIBUTING.md` — issue guidelines (selfcheck output required) and dev conventions.
+- `docs/release-0.20.0-draft.md` — release notes draft for the stable cut.
+
+### Changed
+- README aligned with R4 results: real-agent loop verified (headless), GUI dispatch receipt marked as separately-in-progress; docs index added.
+- All packages 0.20.0-rc.3.
+
 ## 0.20.0-rc.2 — 2026-10-18 (claim fixes single-root invariant; found by R4 live loop)
 
 ### Fixed

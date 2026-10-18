@@ -4,3 +4,4 @@ kb.sqlite
 posts/
 *.log
 .DS_Store
+dist/

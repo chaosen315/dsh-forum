@@ -11,6 +11,7 @@
 ```bash
 git clone https://github.com/chaosen315/forum-kb.git
 cd forum-kb
+bash tools/selfcheck.sh  # 一键自检（init/seed/认领链/渲染幂等/覆盖保护）
 # 两种起点选一种；默认均拒绝覆盖已有库
 node tools/init.js      # 空库 + 身份登记帖
 # 或：node tools/seed.js  # 插件说明帖 + 委托模板与反馈/验收演示 + 开发史样例 + 身份登记帖
@@ -27,7 +28,7 @@ node tools/kb.js query --entry          # 样例库的上手入口帖（空库�
 
 你可以打开派活对应的 session 观察执行，也可以离开，之后回帖看完整结果和依据。有问题就在对应 answer 下点名反馈，确认续聊或恢复回执；通过后在原帖记录完成状态与依据。普通评论只留记录，不保证触发 Agent；CLI `post` / `claim` / `comment` 不启动会话。
 
-继续原帖意味着继承已有经验；另建帖可以选择性引用，不默认扩大旧帖背景。可提前约定“失败先修复、需要我判断则回帖等待”的 if–then 条件。演示库的 `welcome-forum-plugin` 和 `delegate-first-task` 展示完整路径；其产物、验收与 done 都是静态示例，真实 DSH 循环仍待 R4 验收。
+继续原帖意味着继承已有经验；另建帖可以选择性引用，不默认扩大旧帖背景。可提前约定“失败先修复、需要我判断则回帖等待”的 if–then 条件。演示库的 `welcome-forum-plugin` 和 `delegate-first-task` 展示完整路径；其产物、验收与 done 都是静态示例。真实协作回路的实测记录见 [docs/demo.md](docs/demo.md) B 段（隔离环境、真实 agent，2026-10-18）。
 
 ## 核心命令
 
@@ -64,7 +65,7 @@ KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选
 
 全部落空时抛描述性错误（列出按序尝试的候选 + 修复指引）。推荐用 ① 或 ② 显式指定数据根——这样你的知识库目录可以和插件代码目录完全分离。
 
-插件在 DSH 宿主中的注册语法以你所装 DSH 版本的插件文档为准；端到端接线示例与验证脚本在路线图（R4）中补齐。
+插件注册命令、kbRoot 接线与 R4 实测协议见 [docs/dsh-wiring.md](docs/dsh-wiring.md)。
 
 ## 写者身份（人与 agent 同读）
 
@@ -79,12 +80,20 @@ KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选
 
 按需读：`SPEC.md`（目标）→ `FORMAT.md`（格式与校验）→ `CONCEPT.md`（决策轨迹）→ `CONTEXT.md`（术语）；设计决策见 `docs/adr/0001`–`0005`。Agent 执行体的工作纪律见 `.dsh/skills/` 下两个 SKILL.md。
 
+| 文档 | 内容 |
+| --- | --- |
+| [docs/demo.md](docs/demo.md) | 短演示：CLI 可复现演示 + 真实协作案例（样例试跑 ≠ 协作验收） |
+| [docs/dsh-wiring.md](docs/dsh-wiring.md) | DSH 插件接线 + R4 八步实测协议 |
+| [docs/LIMITATIONS.md](docs/LIMITATIONS.md) | 平台/功能/成本限制（如实声明） |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Issue 指引与开发约定 |
+| [docs/release-0.20.0-draft.md](docs/release-0.20.0-draft.md) | 发布说明草稿 |
+
 ## 已知边界（首发快照）
 
 - 运行时零第三方 npm 依赖（CLI 零依赖；三个插件包只声明 peerDependencies，由 DSH 宿主供给）→ 安装免构建。**从源码重建**目前需要 `@deepseek-ai/dsh-tools` / `@deepseek-ai/dsh-typert-generator` / `@deepseek-ai/dsh-typert-protocol@0.2.0-rc.2`（构建期依赖，尚未全部在公共 npm 提供），源码构建暂不承诺。
 - 已验收组合：macOS（arm64）+ Node 25.8.0 + DSH 0.2.0-rc.2。其余平台/版本组合未验证，欢迎反馈。
 - `dsh-tool-forum-kb` 为纯 JS 源码（`lib/index.js` 即源码，无构建步骤）；host 与 client-ui 由 `src/` + tsdown 构建出 `lib/`（配方随库）。
-- DSH 插件在宿主中的端到端注册接线与验证脚本在路线图（R4）中补齐。
+- 真实协作回路（委托→点名→认领→回写→反馈→续做→收尾→新会话接手）已在隔离环境以真实 agent 跑通（[docs/demo.md](docs/demo.md) B 段）；GUI `@派活` 回执项由 GUI 宿主会话单独验收中。
 
 ## License
 
