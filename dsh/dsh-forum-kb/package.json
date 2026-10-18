@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-forum-kb",
   "description": "forum-kb host 服务（ForumKbService，@Remote 方法，client 经 api-gateway 调用）",
-  "version": "0.20.0-rc.3",
+  "version": "0.20.0-rc.4",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

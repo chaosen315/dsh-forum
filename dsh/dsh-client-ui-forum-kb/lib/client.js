@@ -10030,9 +10030,29 @@ function createRefreshLoop(options) {
 	};
 }
 //#endregion
+//#region src/search.ts
+/** 本地子串命中：空白拆词后全部包含（AND），字段 = id / title / summary / assigned。 */
+function localSubstringHit(term, p) {
+	const q = String(term ?? "").trim().toLowerCase();
+	if (!q) return false;
+	const hay = [
+		p?.id,
+		p?.title,
+		p?.summary,
+		p?.assigned
+	].map((x) => String(x ?? "").toLowerCase()).join("\n");
+	return q.split(/\s+/).filter(Boolean).every((w) => hay.includes(w));
+}
+/** 帖子是否命中搜索：本地子串命中 ∪ FTS 命中集（单调并集）。term 为空 = 不过滤（恒 true）。 */
+function searchHit(term, p, ftsIds) {
+	if (!String(term ?? "").trim()) return true;
+	if (localSubstringHit(term, p)) return true;
+	return !!(ftsIds && p && ftsIds.has(String(p.id ?? "")));
+}
+//#endregion
 //#region src/client.ts
 const name = "@deepseek-ai/dsh-client-ui-forum-kb";
-const BUILD = "v0.10.0-global-refresh";
+const BUILD = "v0.10.1-search-union";
 const T = {
 	bg: "#f9fafb",
 	surface: "#ffffff",
@@ -10304,7 +10324,7 @@ function FilterBar(props) {
 		value: props.q,
 		onChange: (e) => props.onQ(String(e.target.value || "")),
 		placeholder: "搜索帖子（标题 / 摘要 / 正文…）",
-		title: props.ftsAvailable ? "走 host FTS（与 kb_search 同源）；回车即时生效" : "host 未升级，本地过滤（标题/摘要/id）",
+		title: props.ftsAvailable ? "搜索命中 = 本地子串（标题/摘要/id/负责，拆词 AND）∪ host FTS（正文等）；回车即时生效" : "host 未升级，本地过滤（标题/摘要/id）",
 		style: {
 			flex: "1 1 200px",
 			minWidth: 160,
@@ -10367,7 +10387,7 @@ function FilterBar(props) {
 		fontFamily: T.mono,
 		fontSize: 10.5,
 		color: T.text3
-	} }, "搜索中…") : props.ftsAvailable ? MonoChip("FTS", true, "host FTS 搜索（kb_search 同源）") : MonoChip("本地过滤", false, "host 无 search 端点（未重启），本地子串过滤")) : null);
+	} }, "搜索中…") : props.ftsErr ? MonoChip("本地过滤 · FTS 不可用", false, "FTS 搜索失败：已保留本地子串命中（标题/摘要/id/负责）；5 秒同步会自动重试") : props.ftsAvailable ? MonoChip("FTS + 本地", true, "并集：本地子串命中（标题/摘要/id/负责，拆词 AND）∪ host FTS 命中（正文等）；FTS 只新增、不覆盖本地结果") : MonoChip("本地过滤", false, "host 无 search 端点（未重启），本地子串过滤")) : null);
 }
 function AnswerCard(a, actions) {
 	const kids = a.comments || [];
@@ -10906,6 +10926,7 @@ function ForumView(props) {
 	const [fltSort, setFltSort] = react.default.useState("default");
 	const [ftsIds, setFtsIds] = react.default.useState(null);
 	const [searching, setSearching] = react.default.useState(false);
+	const [ftsErr, setFtsErr] = react.default.useState(false);
 	const [refsData, setRefsData] = react.default.useState(null);
 	const [refsErr, setRefsErr] = react.default.useState(null);
 	const [inCase, setInCase] = react.default.useState(null);
@@ -10926,6 +10947,7 @@ function ForumView(props) {
 	react.default.useEffect(() => {
 		setFtsIds(null);
 		setSearching(!!term && ftsAvailable);
+		if (!term) setFtsErr(false);
 		loopRef.current?.invalidate();
 		const t = setTimeout(() => void loopRef.current?.request(), 250);
 		return () => clearTimeout(t);
@@ -10935,22 +10957,11 @@ function ForumView(props) {
 		for (const p of posts || []) for (const t of Array.isArray(p.tags) ? p.tags : []) s.add(t);
 		return [...s].sort();
 	}, [posts]);
-	const ql = term.toLowerCase();
 	const visible = (posts || []).filter((p) => {
 		if (fltState !== "all" && p.state !== fltState) return false;
 		if (fltTag !== "all" && !(Array.isArray(p.tags) ? p.tags : []).includes(fltTag)) return false;
 		if (fltEntry && !p.entry) return false;
-		if (ftsIds) return ftsIds.has(p.id);
-		if (ql) {
-			const hay = [
-				p.id,
-				p.title,
-				p.summary,
-				p.assigned
-			].map((x) => String(x ?? "").toLowerCase()).join("\n");
-			return ql.split(/\s+/).every((w) => hay.includes(w));
-		}
-		return true;
+		return searchHit(term, p, ftsIds);
 	});
 	const num = (x) => Number(x) || 0;
 	const sortedVisible = (() => {
@@ -11158,10 +11169,15 @@ function ForumView(props) {
 				try {
 					const rows = unwrap(await forumKb.search({ term }));
 					if (!Array.isArray(rows)) throw new Error("搜索返回格式错误");
-					if (valid()) setFtsIds(new Set(rows.map((x) => String(x.id))));
+					if (valid()) {
+						setFtsIds(new Set(rows.map((x) => String(x.id))));
+						setFtsErr(false);
+					}
 				} catch (error) {
-					if (valid()) setFtsIds(null);
-					throw error;
+					if (valid()) {
+						setFtsIds(null);
+						setFtsErr(true);
+					}
 				} finally {
 					if (valid()) setSearching(false);
 				}
@@ -12174,7 +12190,8 @@ function ForumView(props) {
 		onSort: setFltSort,
 		searching,
 		ftsAvailable,
-		hasTerm: !!term
+		hasTerm: !!term,
+		ftsErr
 	}) : null, react.default.createElement("div", {
 		style: {
 			minHeight: 20,

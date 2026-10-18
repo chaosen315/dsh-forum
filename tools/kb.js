@@ -462,16 +462,31 @@ function cmdTag(rest, opts) {
   }
 }
 
-// --- summary（策展：更新 summary）---
+// 单行不变量：render.js 把 summary 直接拼进 frontmatter 的 `summary: ` 一行，
+// 内嵌 CR/LF 会造出伪字段、并让读侧 parseFm（host list 面 / 工具插件）丢掉后续元数据。
+// 故这里硬拒换行而非静默折叠——summary 的写法约定本就是「一句话定位 + 资产清单」，
+// 长内容属于 answer 正文。
+// 幂等：同值与现值一致时跳过，不空碰 updated_at（对齐 cmdTag 跳过语义）。
 function cmdSummary(rest, opts) {
   const postId = rest[0];
-  const body = bodyOf(opts);
-  if (!postId || !body) { console.error('用法：kb summary <post-id> --body "…"'); process.exit(2); }
+  const raw = bodyOf(opts);
+  if (!postId || typeof raw !== 'string') {
+    console.error('用法：kb summary <post-id> --body "…"（亦支持 --body-b64）');
+    process.exit(2);
+  }
+  const body = raw.trim();
+  if (!body) { console.error('✗ summary 不能为空（去首尾空白后为空）'); process.exit(2); }
+  if (/[\r\n]/.test(body)) {
+    console.error('✗ summary 必须单行（CR/LF 会破坏 frontmatter）：换行请改成「；」或空格，长内容写进 answer 正文');
+    process.exit(2);
+  }
   const db = openDb();
-  if (!db.prepare('SELECT id FROM posts WHERE id = ?').get(postId)) { console.error(`✗ 帖子不存在：${postId}`); process.exit(1); }
+  const post = db.prepare('SELECT summary FROM posts WHERE id = ?').get(postId);
+  if (!post) { console.error(`✗ 帖子不存在：${postId}`); process.exit(1); }
+  if (post.summary === body) { console.log(`· ${postId} summary 与现值一致，跳过（未碰 updated_at）`); return; }
   db.prepare(`UPDATE posts SET summary = ?, updated_at = datetime('now') WHERE id = ?`).run(body, postId);
   rerender(db, postId);
-  console.log(`✓ ${postId} summary 已更新`);
+  console.log(`✓ ${postId} summary 已更新（${post.summary.length} → ${body.length} 字符）`);
 }
 
 // --- depends（策展：跨帖/跨文档引用索引 depends_on 的热更新）---

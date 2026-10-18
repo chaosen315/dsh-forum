@@ -2,6 +2,18 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.20.0-rc.4 — 2026-10-18 (pre-release sync audit: ship known fixes, disclose known defects)
+
+### Fixed
+- **Client search** synced to the maintainer-verified `v0.10.1-search-union` build: list search is now a monotonic union of local substring hits and host FTS hits — multi-word and by-post-id searches no longer show correct results that get wiped ~0.6s later by the FTS phase; FTS zero-hit no longer clears the list; FTS failure degrades to local filtering instead of erroring out. Synced as `src/search.ts` + `src/client.ts` + rebuilt `lib/client.js` (byte-identical to the build that passed human terminal acceptance) + `tests/search-union.mjs`.
+- **`kb summary` hardening** synced from the maintainer side: rejects embedded CR/LF (would corrupt frontmatter), trims and rejects empty, idempotent skip when the value is unchanged (no touched `updated_at`).
+
+### Disclosed
+- Known open search defects (L1 FTS rebuild is a write path — readonly DBs cannot search and concurrent search can truncate; L2 FTS index lacks id/assigned/author; L3 FTS multi-word semantics) documented in `docs/LIMITATIONS.md` instead of shipping silently.
+
+### Changed
+- All packages 0.20.0-rc.4.
+
 ## 0.20.0-rc.3 — 2026-10-18 (release materials)
 
 ### Added

@@ -96,6 +96,15 @@
 // 重建换 BUILD 戳 + 内联修复后的 remote schema。教训：host schema 修复必须连跑 client
 // 重建，BUILD 戳换新为证。
 //
+// v0.10.1（帖子 b0ad9a1965b8，human 2026-10-18 报告"搜索到具体 post 后很快刷新并覆盖结果"）：
+// 搜索命中集改为「本地子串命中 ∪ FTS 命中」的单调并集，修复两阶段语义不一致导致的可见覆盖——
+// 输入瞬间本地过滤（空白拆词 AND，字段 id/title/summary/assigned）先正确命中，250ms 后 host FTS
+// （字面短语，仅索引 title/summary/reply 正文，无 id/assigned）返回并整体替换列表：多词搜索本地
+// 命中→FTS 零命中会把列表清空，按帖 id/作者搜索会把目标帖换成"正文里引用它"的帖。并集后 FTS
+// 只新增命中、不再删改已显示的本地结果（空 Set 也不再被当成清空）。FTS 失败改为仅标注「本地过滤·
+// FTS 不可用」并保留本地结果（不占同步错误行），下一轮 5s 同步自动重试。
+// 仍局限在插件内：host/Remote/tools-kb 合同与语义未改（搜索写库、并发截断等后端问题另帖跟踪）。
+//
 // 关键点：remote.forumKb 不在 dsh-api-remotes 的构建期挂载清单里，本面板自行 $mount
 // @deepseek-ai/dsh-forum-kb/remote（tsdown 连同 zod 打进 bundle，运行期不 require
 // forum-kb 模块）。$mount 走 callerCtx.effect，插件卸载时自动撤销挂载与面板注册。
@@ -104,12 +113,13 @@ import React from "react"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
 import { createRefreshLoop } from "./refresh"
+import { searchHit } from "./search"
 
 export const name = "@deepseek-ai/dsh-client-ui-forum-kb"
 
 // 构建版本戳：子导航右端可见，用于确认浏览器加载的是哪次 bundle。
 // 教训：tsdown 输出被过滤时可能假成功——bundle 未换新则描述符缺 view → 秒回退。
-const BUILD = "v0.10.0-global-refresh"
+const BUILD = "v0.10.1-search-union"
 
 // ---- 设计 token（与 context-composition.html 同源，保持视觉主题统一）----
 const T = {
@@ -252,6 +262,7 @@ function FilterBar(props: {
   fEntry: boolean; onEntry: (v: boolean) => void;
   fSort: string; onSort: (v: string) => void;
   searching: boolean; ftsAvailable: boolean; hasTerm: boolean;
+  ftsErr: boolean;
 }) {
   return React.createElement("div", {
     style: { flex: "0 0 auto", display: "flex", alignItems: "center", gap: 6, padding: "6px 16px", background: T.surface, borderBottom: `1px solid ${T.border}`, flexWrap: "wrap" },
@@ -259,7 +270,7 @@ function FilterBar(props: {
     React.createElement("input", {
       value: props.q, onChange: (e: any) => props.onQ(String(e.target.value || "")),
       placeholder: "搜索帖子（标题 / 摘要 / 正文…）",
-      title: props.ftsAvailable ? "走 host FTS（与 kb_search 同源）；回车即时生效" : "host 未升级，本地过滤（标题/摘要/id）",
+      title: props.ftsAvailable ? "搜索命中 = 本地子串（标题/摘要/id/负责，拆词 AND）∪ host FTS（正文等）；回车即时生效" : "host 未升级，本地过滤（标题/摘要/id）",
       style: { flex: "1 1 200px", minWidth: 160, maxWidth: 320, padding: "4px 9px", borderRadius: 8, border: `1px solid ${T.border}`, fontSize: 12.5, background: T.surface, color: T.text1, outline: "none", fontFamily: T.sans },
     }),
     React.createElement("select", { value: props.fState, onChange: (e: any) => props.onState(e.target.value), style: selectStyle, title: "按状态筛选" },
@@ -285,9 +296,11 @@ function FilterBar(props: {
       ? React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 6, flex: "none" } },
           props.searching
             ? React.createElement("span", { style: { fontFamily: T.mono, fontSize: 10.5, color: T.text3 } }, "搜索中…")
-            : props.ftsAvailable
-              ? MonoChip("FTS", true, "host FTS 搜索（kb_search 同源）")
-              : MonoChip("本地过滤", false, "host 无 search 端点（未重启），本地子串过滤"),
+            : props.ftsErr
+              ? MonoChip("本地过滤 · FTS 不可用", false, "FTS 搜索失败：已保留本地子串命中（标题/摘要/id/负责）；5 秒同步会自动重试")
+              : props.ftsAvailable
+                ? MonoChip("FTS + 本地", true, "并集：本地子串命中（标题/摘要/id/负责，拆词 AND）∪ host FTS 命中（正文等）；FTS 只新增、不覆盖本地结果")
+                : MonoChip("本地过滤", false, "host 无 search 端点（未重启），本地子串过滤"),
         )
       : null,
   )
@@ -656,6 +669,7 @@ function ForumView(props: { forumKb: any }) {
   const [fltSort, setFltSort] = React.useState("default") // v0.6.0：default|new|active|top（客户端本地排序）
   const [ftsIds, setFtsIds] = React.useState<Set<string> | null>(null) // FTS 命中集（null=未启用）
   const [searching, setSearching] = React.useState(false)
+  const [ftsErr, setFtsErr] = React.useState(false) // v0.10.1：FTS 失败降级标记（本地结果仍保留）
   const [refsData, setRefsData] = React.useState<any>(null) // v0.6.0：详情页反向索引面板数据
   const [refsErr, setRefsErr] = React.useState<string | null>(null)
   // v0.7.0（ADR-0004）：派活面投影 + preset 二级选择（动作参数，不进正文）。
@@ -680,6 +694,7 @@ function ForumView(props: { forumKb: any }) {
   React.useEffect(() => {
     setFtsIds(null)
     setSearching(!!term && ftsAvailable)
+    if (!term) setFtsErr(false)
     loopRef.current?.invalidate()
     const t = setTimeout(() => void loopRef.current?.request(), 250)
     return () => clearTimeout(t)
@@ -691,18 +706,15 @@ function ForumView(props: { forumKb: any }) {
     return [...s].sort()
   }, [posts])
 
-  // 可见帖子：state/tag/entry 恒过滤；搜索词命中集（FTS）或本地子串（标题/摘要/id/负责）过滤。
-  const ql = term.toLowerCase()
+  // 可见帖子：state/tag/entry 恒过滤；搜索命中 = 本地子串命中 ∪ FTS 命中（v0.10.1 单调并集）。
+  // 并集是关键修复：FTS 只新增命中，不再整体替换列表——避免"本地正确命中→FTS 覆盖"的可见跳变，
+  // 也避免 FTS 零命中（空 Set）把本地正确结果清空。
+  // searchHit = 本地子串命中 ∪ FTS 命中集（纯函数在 ./search，单测见 tests/search-union.mjs）。
   const visible = (posts || []).filter((p: any) => {
     if (fltState !== "all" && p.state !== fltState) return false
     if (fltTag !== "all" && !(Array.isArray(p.tags) ? p.tags : []).includes(fltTag)) return false
     if (fltEntry && !p.entry) return false
-    if (ftsIds) return ftsIds.has(p.id)
-    if (ql) {
-      const hay = [p.id, p.title, p.summary, p.assigned].map((x: any) => String(x ?? "").toLowerCase()).join("\n")
-      return ql.split(/\s+/).every((w: string) => hay.includes(w))
-    }
-    return true
+    return searchHit(term, p, ftsIds)
   })
 
   // v0.6.0 排序（客户端本地，与 kb query --sort 同语义）：host 未重启缺字段时
@@ -887,10 +899,11 @@ function ForumView(props: { forumKb: any }) {
         try {
           const rows = unwrap(await forumKb.search({ term }))
           if (!Array.isArray(rows)) throw new Error("搜索返回格式错误")
-          if (valid()) setFtsIds(new Set(rows.map((x: any) => String(x.id))))
+          if (valid()) { setFtsIds(new Set(rows.map((x: any) => String(x.id)))); setFtsErr(false) }
         } catch (error) {
-          if (valid()) setFtsIds(null)
-          throw error
+          // v0.10.1：FTS 失败不再整体抛错/清空——清 FTS 命中集后由本地子串命中兜底，
+          // 只在筛选行标注降级（不占同步错误行），下一轮同步自动重试。
+          if (valid()) { setFtsIds(null); setFtsErr(true) }
         } finally { if (valid()) setSearching(false) }
       }),
       run("在案", async () => {
@@ -1384,6 +1397,7 @@ function ForumView(props: { forumKb: any }) {
       searching,
       ftsAvailable,
       hasTerm: !!term,
+      ftsErr,
     }) : null,
     React.createElement("div", { style: { minHeight: 20, padding: "2px 16px", fontSize: 11, color: syncErr ? T.danger : T.text3 }, role: "status" }, syncErr || "页面可见时每 5 秒自动同步"),
     React.createElement("div", { style: { ...scroll, overflowAnchor: "none" } }, errBar, body),
