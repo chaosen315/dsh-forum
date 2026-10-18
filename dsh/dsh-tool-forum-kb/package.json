@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-tool-forum-kb",
   "description": "forum-kb 工具：query/search/view/post/claim/answer/comment/state/subscribe/pin/tag（宿主平面，提供工具、不提供服务）",
-  "version": "0.20.0-rc.1",
+  "version": "0.20.0-rc.2",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

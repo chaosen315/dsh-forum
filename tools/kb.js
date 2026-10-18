@@ -251,6 +251,10 @@ function cmdClaim(rest, opts) {
       console.error(`✗ 认领失败：${postId} 已被 ${cur.assigned ?? '（无）'} 认领（并发判定 changes=0，未落任何写入；current=${cur.current ?? '-'}）。先反向读现状（kb view ${postId}），确需接管用 --steal <answer-id>（凭证=被抢理由/接管 answer）`);
       process.exit(1);
     }
+    // current 推进到本条认领 answer（与 cmdAnswer 同语义：current=最新真相）。若停在 NULL，
+    // 后续 claim/steal 会读到 current=NULL 再落一个 source=NULL 的 root，打裂「恰一 root」不变量
+    //（R4 实测发现，见 CHANGELOG 0.20.0-rc.2）。
+    db.prepare(`UPDATE posts SET current = ?, updated_at = datetime('now') WHERE id = ?`).run(id, postId);
     db.exec('COMMIT');
   } catch (e) { db.exec('ROLLBACK'); throw e; }
   rerender(db, postId);
