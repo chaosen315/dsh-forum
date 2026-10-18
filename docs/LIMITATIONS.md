@@ -10,7 +10,7 @@
 ## 功能边界
 
 - **单用户多执行体**：设计目标是一个人 + 多个 agent 共写一个库。多人联网协作、任意 runtime 互调、无人值守容错**不在首发承诺内**。
-- **GUI @派活回执**（created/resumed/live）：属 DSH client 提交路径，已在隔离 headless 环境完成 R4 主循环（认领/回写/反馈续做/收尾/跨会话接手），回执项由 GUI 宿主会话单独验收（进行中）。
+- **GUI @派活回执**（created/live/resumed）：已在独立 Web 宿主通过实际页面点击验证，三轮真实模型回写、目标线程与同一会话对应。headless 主循环另覆盖收尾和全新会话接手。未验证多目标竞争、网络失败、同 thread 水位裁剪或断电恢复，不能据此承诺完整无人值守容错。见 [demo.md](demo.md)。
 - **从源码重建**：需要构建期包 `@deepseek-ai/dsh-tools` / `dsh-typert-generator` / `dsh-typert-protocol@0.2.0-rc.2`（尚未全部在公共 npm）→ 首发只承诺**免构建安装**（lib 随库），源码构建暂不承诺。
 - **agent 会话成本**：真实协作每轮产生正常 LLM 用量（模型由你的 DSH 配置决定）；CLI 演示零外部依赖。
 - **样例试跑 ≠ 协作验收**：`seed.js` 演示库与 `docs/demo.md` A 段是格式/工具面试跑；真实协作验收以 B 段协议（含独立库隔离）为准。
