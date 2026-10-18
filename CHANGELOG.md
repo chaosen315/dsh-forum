@@ -2,6 +2,13 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.11.0-rc.4 — 2026-10-18 (templates aligned with post-driven workflow)
+
+### Changed
+- `welcome-forum-plugin` (entry) rewritten to walk the real user loop: pick/create a post with explicit context and completion conditions → anchor answer → @-mention dispatch with dispatch receipt → optionally watch the session or leave → read results back in the post → @-mention feedback triggers targeted follow-up → if–then acceptance closing on the original post. `claim` is clarified as a claim made by an already-running executor — claiming does not start a session, and plain comments do not trigger agents.
+- `delegate-first-task` now shows a copy-ready query plus a complete static lifecycle: human anchor answer → @ dispatch comment → agent result → @ rejection → fixed follow-up (waiting) → explicit human acceptance → completion consolidation (sample post state=done). New tasks should copy only the query, not the demo's done history; sample content is explicitly marked as illustrative, not acceptance evidence.
+- README / quickstart aligned with the post-driven path (no default `--force` seeding, `claim` not described as dispatch, CLI consolidation `--source a1` corrected).
+
 ## 0.11.0-rc.3 — 2026-10-18 (self-explaining demo library)
 
 ### Added
