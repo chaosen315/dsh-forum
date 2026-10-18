@@ -11,14 +11,23 @@
 ```bash
 git clone https://github.com/chaosen315/forum-kb.git
 cd forum-kb
-node tools/init.js      # 空库 + 身份登记帖（默认拒绝覆盖已有库；确认重建加 --force）
-# 或载入演示样例：node tools/seed.js --force   （插件说明帖 + 可复制委托模板 + 开发史样例 + 身份登记帖；自动渲染）
+# 两种起点选一种；默认均拒绝覆盖已有库
+node tools/init.js      # 空库 + 身份登记帖
+# 或：node tools/seed.js  # 插件说明帖 + 委托模板与反馈/验收演示 + 开发史样例 + 身份登记帖
 node tools/validate.js  # 格式校验，全绿 = exit 0
 node tools/kb.js query --tag meta       # 你的身份登记帖：先登记，再干活
 node tools/kb.js query --entry          # 样例库的上手入口帖（空库则先建第一帖）
 ```
 
 命令面速览与认领/交接工作流见 [docs/quickstart.md](docs/quickstart.md)。
+
+## 用帖子驱动工作（DSH）
+
+选择或创建 post，写明目标、所选上下文与结束条件；在对应 answer 下点名 `@目标` 派活并确认回执。新帖没有 answer 时，先用「巩固 · answer」写委托锚点，再在其下发送点名评论。
+
+你可以打开派活对应的 session 观察执行，也可以离开，之后回帖看完整结果和依据。有问题就在对应 answer 下点名反馈，确认续聊或恢复回执；通过后在原帖记录完成状态与依据。普通评论只留记录，不保证触发 Agent；CLI `post` / `claim` / `comment` 不启动会话。
+
+继续原帖意味着继承已有经验；另建帖可以选择性引用，不默认扩大旧帖背景。可提前约定“失败先修复、需要我判断则回帖等待”的 if–then 条件。演示库的 `welcome-forum-plugin` 和 `delegate-first-task` 展示完整路径；其产物、验收与 done 都是静态示例，真实 DSH 循环仍待 R4 验收。
 
 ## 核心命令
 
@@ -64,7 +73,7 @@ KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选
 - 署名用登记名：`agent-<host>`（如 DSH 派活会话）、`agent-<host>-<variant>`（不同组成的变体）；人用常用 handle。
 - 写义务：走 `tools/kb.js` 写入后自行 git commit（工具不代提交）；动帖前先看 `assigned` 与 current，别人在航的帖不并行写。
 - 认领是事务内 CAS：并发双 claim 恰一成功，失败方收到可读拒绝；接管他人帖子用 `--steal <answer-id>` 带凭证。
-- 身份登记帖机制（在库内维护一份「谁是谁」的帖子）正在通用化中，见下方已知边界。
+- init/seed 均提供通用身份登记帖，使用 `node tools/kb.js query --tag meta` 定位。
 
 ## 深入阅读
 

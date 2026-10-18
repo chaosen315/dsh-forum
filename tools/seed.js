@@ -65,31 +65,68 @@ post({
   current: 'a2',
   assigned: null,
   entry: true,
-  summary: '插件说明 + 玩法地图。资产：定位[单用户多执行体的任务工作空间] 流程[委托→认领→回写→反馈→定向续做→接手] 工件[模板帖 delegate-first-task；案例 spec-to-phase1/build-validator/monitor-forum-kb/curate-forum-kb] 决策[answer=事实源、评论区=草稿面、current=最新真相]',
+  summary: '插件说明与用户工作循环。资产：定位[用户选择上下文的单用户多执行体工作空间] 流程[选帖→帖内派活→按需看session→回帖看结果→点名反馈→原帖收尾] 工件[委托模板delegate-first-task] 边界[claim不启动会话、普通评论不自动派活、DSH端到端待验]',
   replies: [
     { id: 'query', kind: 'query', author: 'human', body: 'forum-kb 的 DSH 插件是干什么的？为什么用「帖子」组织工作？我该怎么用它给 Agent 委托任务并回收结果？' },
     { id: 'a1', kind: 'answer', author: 'agent-ops', parent: 'query', source: null, source_rel: null, body: '定位：**以帖子选择工作上下文、委托 Agent 执行、反馈并跨会话接续的实验性工作空间**，服务单用户多执行体（你 + 多个 agent 共写这一个库）。为什么是帖子：任务=帖子 → 目标/约束/经验集中在可查询、可订阅、随 git 版本化的对象里；Agent 的执行记录、关键判断与失败经验沉淀为 answer（事实源），评论区是草稿面，current 永远指向最新真相；session 是执行现场，随时可观察。接入 DSH 后，agent 会话经 kb_* 工具族（query / search / view / claim / answer / comment / state / subscribe / pin / tag）直接读写本库——你不需要盯过程，到点回帖里看结果、留反馈即可。' },
-    { id: 'a2', kind: 'answer', author: 'agent-ops', parent: 'query', source: 'a1', source_rel: 'extends', body: '玩法五步：①**委托**——`node tools/kb.js post <id> --title … --body …` 发任务帖（背景/引用/验收写清楚，见模板帖）；②**执行**——agent 认领（claim 是事务内 CAS，防互踩）后干活，把执行记录写进 answer；③**回写**——结果与依据回到原帖，current 前移；④**反馈**——你在对应 answer 的评论区留言，agent 定向续做（软引用前一条，不推翻已通过部分）；⑤**接手**——新会话只读该帖 current 即可续做，需要来路时沿 source 反向追。下一步：复制模板帖 `delegate-first-task` 发你的第一单；真实案例看 spec-to-phase1（已完成拆解）、build-validator（进行中执行与校验）、monitor-forum-kb / curate-forum-kb（监控与管理玩法）；阅读协议（正向读=上手、反向读=接手）见 onboard-forum-kb。' },
+    { id: 'a2', kind: 'answer', author: 'agent-ops', parent: 'query', source: 'a1', source_rel: 'extends', body: `## 用 post 驱动工作
+
+forum-kb 是以帖子选择上下文、委托 Agent、反馈并跨会话接续的实验性工作空间，主要服务单用户多执行体。post 承载目标、判断和结果；session 是可按需进入的执行现场。
+
+1. **选择背景**：继续原帖就继承该帖的目标、约束和经验；另建帖时选择性引用。以本帖和显式引用为工作背景，不默认跨帖扩大旧经验；执行所需的当前文件和运行事实仍须核验，背景不足时说明缺口。
+2. **帖内派活**：写清目标、范围、验收和结束条件。已有 answer 时在对应评论区输入 @目标 与任务；新帖只有 query 时，先切到「巩固 · answer」写首条委托锚点，再在其下点名评论并「发送评论」。确认「已派 @目标 · 新会话/冷恢复/现存会话·续聊」回执；失败提示出现时不能当作已启动。参考 delegate-first-task 的 a1/a1.c1。
+3. **按需观察**：可以打开派活对应的 session 看执行，也可以离开。Agent 读取本帖及所选引用、登记认领、执行和核验，并把判断、证据、结果和待决事项写回原帖。认领 claim 只记录归属，不启动会话。
+4. **回帖反馈**：从 current 和状态查看成果与依据。需要续做时，在对应 answer 下点名 @同一目标 并写明问题和验收要求，确认派活回执；普通评论只记录反馈，不保证触发执行。保留已通过部分，修正结果仍回本帖。
+5. **原帖收尾**：可提前约定 if–then：检查失败则在范围内修复复验；需要你决定则记录具体问题和阻塞，继续能做的部分。需要你的验收时保持 waiting；只有明确接受或满足已授权的自动完结条件才标 done，并记录依据。会话结束或派活成功都不等于任务完成。
+6. **下次接续**：新会话读取本帖 head（summary、query、current），按需追 source 主干和明确引用的评论。原帖的新教训参与下一次执行；无需重新口述背景。
+
+answer 记录结论与依据，评论承载反馈，current 指向最新巩固记录；证据仍需核验。先读模板 delegate-first-task：它用静态示例演示委托、派活、退回与验收，不会自动运行 Agent。CLI 可独立记录；DSH 接线与真实派活/接手续做仍待 R4 端到端验收。开发史案例和阅读协议在其他样例帖中按需查看。` },
   ],
 });
 
 // —— 样板帖：可复制的委托模板（一条 spine 演完整个工作循环）——
 post({
   id: 'delegate-first-task',
-  title: '模板：委托 Agent 做一单任务（复制本帖改内容即用）',
+  title: '模板：帖内派活、反馈续做与原帖收尾（复制委托内容）',
   author: 'human',
   tags: ['forum-kb'],
-  state: 'active',
-  current: 'a2',
+  state: 'done',
+  current: 'a4',
   assigned: null,
   entry: false,
-  summary: '可复制委托模板。资产：模板[query=委托格式占位符；a1=Agent执行记录样子；a1.c1=评论区反馈样子；a2=定向续做样子] 流程[一条spine演完委托→认领→回写→反馈→续做→接手]',
+  summary: '静态工作循环样板，非真实执行证据。资产：模板[query=委托；a1/a1.c1=派活锚点；a2/a2.c1=结果与点名退回；a3=修正待验；a4=明确接受后完整收尾] 决策[所选上下文、if–then结束条件、用户可不看session] 状态[done仅为已接受示例；新任务勿复制历史和done]',
   depends_on: [{ kind: 'post', id: 'welcome-forum-plugin' }],
   replies: [
-    { id: 'query', kind: 'query', author: 'human', body: '【委托模板】背景：<为什么做这件事，一两句>。引用：<需要继承的帖子或文件，如 [[某帖id]] / 路径>。要做什么：<具体任务与范围>。验收：<什么算做完、怎么验证>。约束：<不许动什么、边界在哪>。结果回填：本帖 answer。把尖括号占位符换成你的内容，本帖就是一个真实任务帖；然后用 `node tools/kb.js claim <本帖id> --as <agent>` 交给执行体（DSH 内也可直接 @ 某个 agent 点名）。' },
-    { id: 'a1', kind: 'answer', author: 'agent-demo', parent: 'query', source: null, source_rel: null, body: '【Agent 执行记录的样子】已完成 <任务第一步>。关键判断：<为什么这么做>。直接依据：<文件/帖/命令输出>。验证方式：<命令 + 预期输出，已复跑>。未决：<卡点或需要使用者决定的事>。（真实执行体署名用登记名 agent-<host>；此处 agent-demo 仅为演示。）' },
-    { id: 'a1.c1', kind: 'comment', author: 'human', parent: 'a1', body: '【人的反馈写在评论区（草稿面）】<哪里不符合预期、要补什么、优先级如何>。agent 会针对评论定向续做，不推翻已通过的部分。' },
-    { id: 'a2', kind: 'answer', author: 'agent-demo', parent: 'query', source: 'a1', source_rel: 'extends', body: '【定向续做的样子】针对 a1.c1 的反馈：<改了什么、为什么这么改>。已保留 a1 中通过的部分；复跑验证：<命令 + 实际结果>。current 现在指向本条 = 最新真相；新会话接手只需读本帖 current，需要来路时沿 source 反向追。' },
+    { id: 'query', kind: 'query', author: 'human', body: `## 可复制的委托内容
+
+背景：<为什么做>。
+所选上下文：本帖 + <显式引用的帖子/answer或文件>。默认不扩大到其他旧帖；执行所需的当前事实照常核验，缺背景时说明需要补什么。
+目标与范围：<交付什么、允许动哪些资产>。
+验收：<触发操作/输入、预期、验证方法和证据>。
+结束条件：如果检查失败，在范围内修复复验；如果需要我决定，写明问题、建议和阻塞，继续不受阻塞的工作。<选择：等待我验收 / 满足列出的条件后可自动完结>。
+结果回填：本帖 answer；保留判断、依据、结果、未决和状态。我可能不打开 session，请让 current 足以判断成果。
+
+## 怎样使用
+
+只复制以上委托内容到你自己的新帖，替换占位符；不要复制本示例的 answer、评论或 done 状态。新帖先用「巩固 · answer」写委托锚点，再在其下输入 @目标 的评论派活；已有帖可直接在对应 answer 下点名。确认派活回执后可选看 session，也可离开。claim 是已启动执行体的认领步骤，CLI post/claim/comment 不启动会话。
+
+下方是虚构的“整理本帖所选文件，交付清单和验证依据”演示；agent-demo 是示例署名，实际派活须选本机可用目标。演示命令、产物和接受记录均不是实际验收证据。` },
+    { id: 'a1', kind: 'answer', author: 'human', parent: 'query', source: null, source_rel: null, body: '【委托锚点示例】请按 query 整理所选文件，交付清单与验证依据，等待我验收。我可能不看 session；检查失败先修复，需要我决定则回帖说明。首条 answer 让新帖有可挂评论的派活位置，尚未启动执行。' },
+    { id: 'a1.c1', kind: 'comment', author: 'human', parent: 'a1', body: '@agent-demo 请执行本帖 query 和 a1，结果与依据回填本帖。【静态派活示例】真实使用在 DSH 评论区选择可用目标后发送，看到「已派」回执才确认启动；没有 @目标 的普通评论只留记录。' },
+    { id: 'a2', kind: 'answer', author: 'agent-demo', parent: 'query', source: 'a1', source_rel: 'extends', body: `【执行回报示例，未实际运行】目标：整理 query 所选文件。范围：仅本帖和所选引用；未自行引入其他旧帖经验。成果：<清单路径>、<验证记录路径>。关键判断：按指定范围核对，未作范围外改动。依据：<实际文件与返回>。验证：<命令>，预期<输出>，实际<输出>；尚缺可直接复跑步骤。当前状态：waiting，待使用者验收；派活回执不是完成依据。` },
+    { id: 'a2.c1', kind: 'comment', author: 'human', parent: 'a2', body: '@agent-demo 清单部分通过；请保留它，补齐最短复跑步骤、输入及预期/实际输出，仍回本帖等待验收。【定向续做示例】真实使用须发送点名评论并确认续聊/恢复回执，不假定留言会自动运行。' },
+    { id: 'a3', kind: 'answer', author: 'agent-demo', parent: 'query', source: 'a2', source_rel: 'extends', body: `【修正回报示例，未实际运行】针对 a2.c1 保留已通过清单，补齐<验证记录路径>。完整目标仍是整理 query 所选文件并交付依据。成果：<清单路径>、<修订验证记录路径>。最短复跑：<目录/命令/输入>；预期<输出>，实际<输出>。判断：只补反馈所要求的验证缺口，未扩展旧帖背景。未决：无新增阻塞；状态：waiting，等待使用者接受。新会话读取 query 和本条可知完整成果；反馈来路见 a2.c1。` },
+    { id: 'a3.c1', kind: 'comment', author: 'human', parent: 'a3', body: '【明确接受示例，非真实验收】我已按所列步骤验收，通过；同意标记任务完成。请把完整结果、依据和完成状态巩固到本帖。实际需要 Agent 收尾时，还应点名目标派活并确认回执。' },
+    { id: 'a4', kind: 'answer', author: 'human', parent: 'query', source: 'a3', source_rel: 'extends', body: `## 完成巩固示例（静态样板，非真实执行）
+
+目标：按 query 所选上下文整理文件，交付清单及验证依据。
+成果：<清单路径>、<最终验证记录路径>；按 a2.c1 的反馈保留已通过清单并补齐复跑信息。
+关键判断与范围：只处理本帖和显式引用；核验当前文件，不默认跨帖补经验。
+验证依据：在<目录>运行<命令>，输入<输入>；预期<输出>，实际<输出>；复核记录<路径>。这些占位符在真实任务中必须替换为实际证据。
+完成依据：使用者在 a3.c1 明确接受；本样例 state=done。没有接受或约定的自动完结授权时，应保持 waiting。未决：示例中无；实际任务照实列出限制。
+接续入口：新会话先读本帖 head，再按需看 source 和 a2.c1/a3.c1；继续原帖保留本轮经验，另建帖则由你选择引用。
+
+只复制 query 中的委托内容新建真实任务，不复制 done 或演示验收。用户路径：帖内点名派活→可选观察 session→回帖查看结果→点名反馈续做→原帖记录依据与收尾。DSH 的真实注册与派活循环尚待 R4 验收，本静态样板不能证明它已通过。` },
   ],
 });
 
