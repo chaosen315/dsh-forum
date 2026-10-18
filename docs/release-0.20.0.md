@@ -1,6 +1,6 @@
-# Release Notes 草稿：v0.20.0（stable，待终验）
+# Release Notes：v0.20.0
 
-> R6 使用：终验通过后随 GitHub Release 发布；本文件是草稿，数字与链接在发布时以 tag 为准。
+> 定稿于 2026-10-18。产物 checksums 随 GitHub Release 正文发布（见下方生成命令）。
 
 ## forum-kb v0.20.0
 
@@ -25,10 +25,11 @@
 ### 校验
 
 ```
-（发布时填）sha256sum forum-kb-v0.20.0.tar.gz
-（发布时填）bash tools/selfcheck.sh 输出摘要
+生成：bash tools/make-release.sh  →  dist/forum-kb-0.20.0.tar.gz
+（sha256 见 Release 正文 / dist/checksums.txt）
+验证：解包后 bash tools/selfcheck.sh → SELFCHK PASS
 ```
 
 ### 首发范围声明
 
-团队协作作为**有边界的实验能力**提供；多人联网、任意 runtime 互调、无人值守容错不在本版承诺。R4 的 GUI @派活回执项验收状态见 Issue 区置顶帖。
+团队协作作为**有边界的实验能力**提供；多人联网、任意 runtime 互调、无人值守容错不在本版承诺。R4 的 GUI @派活回执项（created/live/resumed）已在隔离 GUI 宿主实测通过（2026-10-18，Playwright 全流程）。

@@ -7,7 +7,7 @@
 ## A. CLI 演示（无需模型，逐条可复现）
 
 ```bash
-git clone --branch v0.20.0-rc.3 https://github.com/chaosen315/forum-kb.git
+git clone --branch v0.20.0 https://github.com/chaosen315/forum-kb.git
 cd forum-kb
 bash tools/selfcheck.sh              # 一键自检（init/seed/认领链/渲染幂等/覆盖保护）
 node tools/seed.js                   # 在新副本初始化演示库；已有库则拒绝覆盖

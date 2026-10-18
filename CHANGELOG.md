@@ -2,6 +2,16 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.20.0 — 2026-10-18 (first stable release)
+
+First stable cut of the 0.20 line; content = 0.20.0-rc.1…rc.4 with no functional changes on top of rc.4.
+
+### Summary of the line
+- Empty-database `init` (refuses overwrite by default), demo `seed` with auto-render and self-explaining template posts, generic identity entry (`kb query --tag meta`).
+- `kb_summary` model tool (12-tool surface); `kb claim` advances `current` (single-root invariant, fixed via R4 real-loop regression).
+- Client search shipped as the human-accepted `v0.10.1-search-union` build (monotonic local ∪ FTS); `kb summary` single-line/idempotent hardening.
+- Release materials: selfcheck, make-release, demo (CLI + real-agent case), limitations (incl. open search defects L1–L3), contributing guide, DSH wiring + R4 protocol.
+
 ## 0.20.0-rc.4 — 2026-10-18 (pre-release sync audit: ship known fixes, disclose known defects)
 
 ### Fixed
