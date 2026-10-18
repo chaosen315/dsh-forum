@@ -1,6 +1,8 @@
 # Quickstart：从零到第一帖
 
-目标：建好自己的知识库、写入第一帖，并从样板帖理解「派活 → 回写 → 反馈 → 续做 → 收尾」。下方 CLI 示例只演示记录结构；真实 DSH 派活验收仍待 R4。
+目标：建好自己的知识库、写入第一帖，并从样板帖理解「派活 → 回写 → 反馈 → 续做 → 收尾」。下方 CLI 示例只演示记录结构；真实 DSH 协作的已有验证见 [Demo](demo.md)。
+
+**想先做一件具体的事？** 直接选 [六种日常用例](../examples/workflows/README.md)：定向修改、换会话接手、项目盘点、经验复用、调研转执行、分工与复核。main 附带独立练习库创建器和验收材料，不会覆盖常用库；原 `v0.20.0` tag 不含这批新增用例。
 
 > 两个初始化工具（`init.js` / `seed.js`）都**默认拒绝覆盖已有 `kb.sqlite`**——已有数据不会被动碰；确认重建才加 `--force`。
 
@@ -24,11 +26,11 @@ node tools/seed.js
 node tools/validate.js                  # 全绿 = exit 0（init/seed 已自动渲染；手动补渲染跑 node tools/render.js）
 node tools/kb.js query --entry          # 上手入口帖
 node tools/kb.js query --tag forum-kb   # 按标签列帖（列表层，无正文）
-node tools/kb.js view <post-id>         # 读阅读边界：summary + query + current
+node tools/kb.js view <post-id> --scope head --comments none  # summary + query + current
 node tools/kb.js search "关键词"         # 全文搜索
 ```
 
-读帖协议：answer 是事实源，评论区是草稿；接手 = 反向读（current → query），上手 = 正向读（query → current）。
+读帖协议：answer 是事实源，评论区是草稿；接手 = 反向读（current → query），上手 = 正向读（query → current）。DSH `kb_view` 默认 head/none；裸 CLI 默认 full/on，因此上方命令显式指定阅读边界。
 
 ## 3. 写入第一帖
 
@@ -74,5 +76,6 @@ node tools/kb.js answer my-first-task --as agent-demo \
 
 ## 下一步
 
-- 空库 init、身份入口和演示库已提供；R4 仍需验证真实 DSH 注册、派活、反馈续做和新会话接手；R5 完善公开材料。
+- 从 [定向反馈](../examples/workflows/01-focused-feedback.md) 完成一次“只改第二行”的实际练习，再尝试 [新会话接手](../examples/workflows/02-handoff.md)。
+- 已有真实派活、续做及新会话接手验证的具体范围见 [Demo](demo.md)；支持组合和已知缺口见 [LIMITATIONS](LIMITATIONS.md)。
 - 遇到问题欢迎提 Issue。

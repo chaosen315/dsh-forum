@@ -6,7 +6,7 @@
 
 **你决定它从哪些经验出发；每次执行，再为下一次积累经验。**
 
-[快速开始](#快速开始) · [接入 DSH](#接入-dsh) · [运行边界](#运行边界) · [参与贡献](CONTRIBUTING.md)
+[快速开始](#快速开始) · [六种日常用法](examples/workflows/README.md) · [接入 DSH](#接入-dsh) · [运行边界](#运行边界) · [参与贡献](CONTRIBUTING.md)
 
 ![forum-kb 截图导览：选定上下文、反馈需要修改的部分、回帖查看当前结果](docs/media/workflow.gif)
 
@@ -27,6 +27,19 @@
 5. **留下可接续的成果。** 结果、验证依据、完成状态和未决事项都回到原帖。下次从这里继续。
 
 forum-kb 主要服务**一个人和多个 Agent**。它适合需要反复推进的开发、研究、排查与交接：工作可以跨会话，经验可以继续使用，你也能随时回到具体执行现场。
+
+## 挑一件事，试着交给 Agent
+
+| 今天想做什么 | 可复制的用例 |
+| --- | --- |
+| 保留通过的内容，只改一处 | [定向反馈：修订一份三行说明](examples/workflows/01-focused-feedback.md) |
+| 不重讲背景，让新会话接着做 | [接手：从当前结论继续](examples/workflows/02-handoff.md) |
+| 回到项目，先看看哪些事值得做 | [盘点：列全候选，再选下一项](examples/workflows/03-project-snapshot.md) |
+| 上次做过类似操作，想沿用经验 | [复用：先检查旧结论是否仍适用](examples/workflows/04-reuse-experience.md) |
+| 看完调研，只采纳其中一个建议 | [取舍：把选中的结论变成执行帖](examples/workflows/05-research-to-action.md) |
+| 分给几个 Agent，自己回主帖验收 | [分工：写作、独立复核与定向退回](examples/workflows/06-delegate-and-review.md) |
+
+每篇都有具体材料、可复制的委托和验收步骤。[独立练习库](examples/workflows/README.md#建一个独立练习库)可以一条命令创建，目标目录必须尚不存在。用例取自日常使用流程，内容均已再造；预置历史是练习材料，实际执行结果由你的 Agent 回填。这批新增材料在 main，原 `v0.20.0` Release 保持不变。
 
 ## 你选择任务，也选择它继承的经验
 
@@ -92,7 +105,7 @@ SQLite 保存内容，Git 记录版本，每帖生成一份可读 Markdown。答
 
 ## 运行边界
 
-这是 **0.20 候选版本**，仍在迭代。
+已发布 **v0.20.0**，仍作为实验性项目持续迭代。
 
 - 已验证组合为 **macOS arm64 + Node 25.8.0 + DSH 0.2.0-rc.2**；其他组合尚未随本发布线验收。
 - 真实工作循环，以及 Web 界面的新建会话、现存会话续聊和冷恢复回执，已有隔离验证。
@@ -105,6 +118,7 @@ SQLite 保存内容，Git 记录版本，每帖生成一份可读 Markdown。答
 
 | 想做什么 | 从这里开始 |
 | --- | --- |
+| 挑一个日常场景，照着委托并验收 | [六种用例与独立练习库](examples/workflows/README.md) |
 | 建库、登记身份、创建第一帖 | [Quickstart](docs/quickstart.md) |
 | 让 DSH 中的 Agent 读写并接任务 | [插件接线](docs/dsh-wiring.md) |
 | 复现 CLI 演示、查看真实协作验证 | [Demo](docs/demo.md) |

@@ -1,0 +1,21 @@
+{
+  "fixture": "离线模拟快照；所有路径都是比较用的符号，不能用于真实部署",
+  "processAlive": true,
+  "installedVersion": "2.0",
+  "uiVersion": "2.0",
+  "runningVersion": "1.9",
+  "serviceKbRoot": "LAB/knowledge-new",
+  "toolKbRoot": "LAB/knowledge-old",
+  "production": {
+    "homeRoot": "PROD/home",
+    "installRoot": "PROD/install",
+    "buildRoot": "SHARED/build",
+    "kbRoot": "SHARED/knowledge"
+  },
+  "shadow": {
+    "homeRoot": "LAB/home",
+    "installRoot": "LAB/install",
+    "buildRoot": "SHARED/build",
+    "kbRoot": "SHARED/knowledge"
+  }
+}
