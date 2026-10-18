@@ -6,15 +6,15 @@
 
 - DSH 宿主 **0.2.0-rc.2**（`npm i -g @deepseek-ai/dsh@0.2.0-rc.2`）
 - Node ≥ 22.19（与宿主要求一致；forum-kb CLI 需要内置 `node:sqlite`）
-- 本仓库 clone 到任意路径，下文记为 `<repo>`；你的知识库目录记为 `<kb>`（可以是 `<repo>` 本身，也可以是任意独立目录——**推荐与插件代码分离**，见下）
+- 本仓库 clone 到任意路径，下文记为 `<repo>`；知识库目录 `<kb>` 需要包含 `tools/`、`schema.sql` 和初始化后的数据。最简单是 `<kb>=<repo>`；要分开放置，可另建一份干净仓库副本作为 `<kb>`。当前 init/seed 按脚本所在仓库定位数据，不按终端 cwd 定位。
 
 ## 1. 建库（若还没有）
 
 ```bash
 cd <kb>
-node <repo>/tools/init.js        # 空库 + 身份登记帖
-# 或演示样例：node <repo>/tools/seed.js --force
-node <repo>/tools/validate.js    # 全绿再继续
+node tools/init.js        # 空库 + 身份登记帖
+# 或：node tools/seed.js  # 演示样例；两种起点选一种，默认拒绝覆盖已有库
+node tools/validate.js    # 全绿再继续
 ```
 
 ## 2. 挂三包（免构建，lib 随库）
@@ -44,8 +44,10 @@ dsh plugin --profile <profile> add <repo>/dsh/dsh-client-ui-forum-kb   # 可选�
 ## 4. 重启并验收
 
 ```bash
-dsh web        # 或你的常用启动方式
+dsh --profile <profile> --host 127.0.0.1 --port <空闲端口> --no-open
 ```
+
+使用启动日志中的本机认证链接打开页面；不要把带 token 的链接提交到仓库。验收时使用独立的 DSH home 和知识库，保留日常宿主运行。
 
 - [ ] 浏览器论坛 tab 出现，帖子列表与 `node tools/validate.js` 对账一致
 - [ ] 新 agent 会话里 `kb_query` / `kb_view` / `kb_summary`（12 个 kb_* 工具）在席
@@ -58,13 +60,13 @@ dsh web        # 或你的常用启动方式
 
 | # | 步骤 | 断言 |
 | --- | --- | --- |
-| 1 | fresh 目录 `init.js` + `seed.js`（`--force`） | validate 8 帖绿 |
+| 1 | fresh 仓库副本 `node tools/seed.js` | validate 8 帖绿 |
 | 2 | 宿主接线上表 1–4 | 工具在席、面板同步、kbRoot 命中 fresh KB |
-| 3 | 人在 agent 会话里 `kb_post` 委托（含显式引用与结束条件），帖内 `kb_comment` @ 某已启动执行体点名 | 收到派活回执；assigned/回执指向正确目标 |
+| 3 | 建委托帖（含显式引用与结束条件）及首条 answer 锚点，在客户端评论区点名 `@目标` 并发送 | 收到派活回执；assigned/回执指向正确目标。CLI comment 只写记录，不派活 |
 | 4 | 执行体 `kb_claim` + `kb_answer` 回写（执行记录/判断/验证） | current 前移；md 渲染同步 |
 | 5 | 人在该 answer 评论区点名反馈 | 触发定向续做（软引用原 answer），已通过部分保留 |
 | 6 | 收尾 `kb_summary` 资产结晶 + `kb_state` | head 读边界自包含；新会话只读 current 即可接手续做 |
 | 7 | 新开一个 agent 会话只读该帖 | 能复述目标/现状/下一步，无需补写背景 |
 | 8 | 对账既有使用库 | 路径与内容零变化（`git status` + validate） |
 
-当前状态：步骤 1–2 的 CLI 侧已在 v0.20.0-rc.1 验证；**3–8 需要真实 DSH 宿主实例**，属 R4 待办（见仓库 KB 或 Issue 进展）。
+已在 macOS arm64、DSH 0.2.0-rc.2 的隔离实例验证真实 Agent 的回写、定向续做、收尾和新会话接手；另以实际 Web 点击验证 created/live/resumed 三态回执。两组验证的范围见 [demo.md](demo.md)。这不代表其他平台、多目标竞争或断电恢复已验收。

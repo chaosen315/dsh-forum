@@ -1,100 +1,114 @@
 # forum-kb
 
-> 一个 git-native、论坛形式的任务知识库：唯一原语是「帖子」，把任务交接、项目协作、业务上手沉淀为可查询、可订阅的帖子。单一事实源 = `kb.sqlite`（SQLite，随 git 提交）+ 每帖一个 md 可读渲染（生成物，非手写）。
+### 让工作留在帖子里，让 Agent 接着做。
 
-定位：**以帖子选择工作上下文、委托 Agent 执行、反馈并跨会话接续的实验性工作空间**，主要服务单用户多执行体（一个人 + 多个 AI agent 共写一个知识库）。
+在一个帖子里交代目标、选择背景、点名派活，再把反馈和结果留回这里。下次继续这项工作时，Agent 从帖子找回已有判断、证据和下一步。
 
-## 快速开始（CLI，5 分钟）
+**你决定它从哪些经验出发；每次执行，再为下一次积累经验。**
 
-需要：Node ≥ 22.19（用到内置 `node:sqlite`）。
+[快速开始](#快速开始) · [接入 DSH](#接入-dsh) · [运行边界](#运行边界) · [参与贡献](CONTRIBUTING.md)
+
+![forum-kb 截图导览：选定上下文、反馈需要修改的部分、回帖查看当前结果](docs/media/workflow.gif)
+
+*约 11 秒的截图导览：`v0.20.0-rc.3` 的真实 DSH 界面，内容为演示任务，并非模型执行录像。查看静态高清图：[任务与上下文](docs/media/choose-context.png) · [反馈与续做](docs/media/feedback-and-result.png) · [当前结果](docs/media/current-result.png)。*
+
+## 一项工作，可以反复接着做
+
+例如，准备一份发布说明：
+
+> 沿用这条安装检查结论，写一份新用户能看懂的发布说明。<br>
+> 先检查链接，有问题就修正；完成后回本帖，等我验收。<br>
+> 我可能不看会话过程，请把结果和依据留在这里。
+
+1. **选帖，确定背景。** 继续原帖，或新建帖子并引用需要继承的材料。
+2. **点名，开始工作。** 在帖内评论中 `@Agent` 派活，确认新会话或续聊回执。
+3. **按需看过程。** 可以打开对应会话观察执行，也可以离开，之后回帖看结果。
+4. **针对结果反馈。** “首段通过，只补平台范围。”点名让 Agent 继续，保留已经通过的部分。
+5. **留下可接续的成果。** 结果、验证依据、完成状态和未决事项都回到原帖。下次从这里继续。
+
+forum-kb 主要服务**一个人和多个 Agent**。它适合需要反复推进的开发、研究、排查与交接：工作可以跨会话，经验可以继续使用，你也能随时回到具体执行现场。
+
+## 你选择任务，也选择它继承的经验
+
+选定一个帖子，就是给这次工作选择背景。目标、约束、已作出的判断，以及显式引用的资料，都在一个可见的地方。
+
+![任务帖中的目标、引用、结束条件和点名委托](docs/media/choose-context.png)
+
+继续原帖时，新的经验会参与下一次执行；另开任务时，可以只引用需要的部分。Agent 仍需核验当前文件和运行事实。上下文选择是一项工作约定，读写范围仍由执行环境的权限控制。
+
+## 反馈留在结果旁边
+
+在对应结果下指出需要修改的部分，再点名同一 Agent 续做。修正会成为新的答复，旧判断和反馈仍可追溯。
+
+![用户保留已通过内容、退回平台说明，Agent 将修正结果留回同一帖](docs/media/feedback-and-result.png)
+
+`current` 指向当前可接手的答复：它应当说清完整结果、依据、下一步和限制。`waiting` 表示仍需处理或验收，`done` 应有完成依据。这样，即使你没有观看执行过程，回来也有明确的阅读入口。
+
+## 快速开始
+
+**先用演示库了解玩法。** 需要 Node.js ≥ 22.19、Git；下方自检使用 Bash。CLI 使用 Node 内置 SQLite，无需安装第三方 npm 依赖，也不需要模型密钥。
 
 ```bash
-git clone https://github.com/chaosen315/forum-kb.git
+git clone --branch v0.20.0-rc.3 https://github.com/chaosen315/forum-kb.git
 cd forum-kb
-bash tools/selfcheck.sh  # 一键自检（init/seed/认领链/渲染幂等/覆盖保护）
-# 两种起点选一种；默认均拒绝覆盖已有库
-node tools/init.js      # 空库 + 身份登记帖
-# 或：node tools/seed.js  # 插件说明帖 + 委托模板与反馈/验收演示 + 开发史样例 + 身份登记帖
-node tools/validate.js  # 格式校验，全绿 = exit 0
-node tools/kb.js query --tag meta       # 你的身份登记帖：先登记，再干活
-node tools/kb.js query --entry          # 样例库的上手入口帖（空库则先建第一帖）
+
+bash tools/selfcheck.sh
+node tools/seed.js
+node tools/kb.js query --entry
+node tools/kb.js view delegate-first-task --scope spine --comments on
 ```
 
-命令面速览与认领/交接工作流见 [docs/quickstart.md](docs/quickstart.md)。
+自检在临时目录运行。演示库包含插件说明、委托模板、反馈与收尾示例；这些记录帮助你理解用法，不会自动启动 Agent。
 
-## 用帖子驱动工作（DSH）
+要建立自己的空库，在另一个干净副本中用 `node tools/init.js` **替代** `node tools/seed.js`。两者默认拒绝覆盖已有数据库。再用 `node tools/kb.js query --tag meta` 找到身份登记入口，按 [Quickstart](docs/quickstart.md) 创建第一帖。
 
-选择或创建 post，写明目标、所选上下文与结束条件；在对应 answer 下点名 `@目标` 派活并确认回执。新帖没有 answer 时，先用「巩固 · answer」写委托锚点，再在其下发送点名评论。
+## 接入 DSH
 
-你可以打开派活对应的 session 观察执行，也可以离开，之后回帖看完整结果和依据。有问题就在对应 answer 下点名反馈，确认续聊或恢复回执；通过后在原帖记录完成状态与依据。普通评论只留记录，不保证触发 Agent；CLI `post` / `claim` / `comment` 不启动会话。
+要在界面中点名派活，需要 **DSH 宿主、可用的模型配置和 forum-kb 插件**。仓库附带预构建插件，可以免构建安装：
 
-继续原帖意味着继承已有经验；另建帖可以选择性引用，不默认扩大旧帖背景。可提前约定“失败先修复、需要我判断则回帖等待”的 if–then 条件。演示库的 `welcome-forum-plugin` 和 `delegate-first-task` 展示完整路径；其产物、验收与 done 都是静态示例。真实协作回路的实测记录见 [docs/demo.md](docs/demo.md) B 段（隔离环境、真实 agent，2026-10-18）。
-
-## 核心命令
-
-```bash
-node tools/kb.js query  [--tag X] [--state S] [--assigned A] [--entry] [--pinned] [--sort default|new|active|top]
-node tools/kb.js search <关键词>
-node tools/kb.js view <post-id> [--scope head|spine|full] [--comments on|none]
-node tools/kb.js claim <post-id> --as <agent>            # 认领（事务内 CAS，防互踩）
-node tools/kb.js answer <post-id> --as <agent> --source <reply-id> --rel <rel> --body "…"
-node tools/kb.js comment <post-id> --as <author> --on <answer-id> --body "…"
-node tools/kb.js state <post-id> --state <active|waiting|done|archived>
-node tools/kb.js subscribe add --tag X && node tools/kb.js subscribe check
-node tools/render.js    # 从 kb.sqlite 重渲染 posts/*.md
-```
-
-每次写后工具自动重渲染该帖 md；git 提交由调用方负责。
-
-## DSH 集成（可选）
-
-本仓库含三个 DSH 插件包（预构建 `lib/` 随库，免构建安装）：
-
-| 包 | 作用 |
+| 插件 | 你得到的能力 |
 | --- | --- |
-| `dsh/dsh-forum-kb` | host 服务（ForumKbService，@Remote 方法，client 经 api-gateway 调用） |
-| `dsh/dsh-tool-forum-kb` | 12 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag/summary），spawn `tools/kb.js` |
-| `dsh/dsh-client-ui-forum-kb` | 全局论坛面板与会话标签（web client 注入） |
+| `dsh-forum-kb` | 为论坛提供帖子读取、写入与派活服务 |
+| `dsh-tool-forum-kb` | 让 Agent 在会话中使用 `kb_*` 工具读写帖子 |
+| `dsh-client-ui-forum-kb` | 在 DSH 中浏览论坛、查看引用、点名委托和反馈 |
 
-KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选胜出，不写死机器路径）：
+按 [DSH 接线指南](docs/dsh-wiring.md) 注册三个包，并让服务和工具的 `kbRoot` 指向同一个知识库目录。该目录需要包含 CLI 工具、schema 和初始化后的数据库；最简单的起点就是上面的仓库副本。
 
-1. cordis 行 `config.kbRoot`（服务行与工具行均支持）；
-2. 环境变量 `FORUM_KB_ROOT`（指向 forum-kb 目录；对之后新拉起的进程生效）；
-3. `<workspaceRoot>/forum-kb` 约定式；
-4. `<进程 cwd>/forum-kb` 历史兜底。
+接好后，在任务帖对应答复下输入 `@目标` 并发送评论，确认「已派」回执。新帖还没有答复时，先用「巩固 · answer」写一条委托锚点，再在其下点名。
 
-全部落空时抛描述性错误（列出按序尝试的候选 + 修复指引）。推荐用 ① 或 ② 显式指定数据根——这样你的知识库目录可以和插件代码目录完全分离。
+普通评论只留下记录；CLI `post`、`claim`、`comment` 也不会自行启动模型。`claim` 负责登记谁接手，实际派活由 DSH 完成。模型用量按你的提供方配置计费。
 
-插件注册命令、kbRoot 接线与 R4 实测协议见 [docs/dsh-wiring.md](docs/dsh-wiring.md)。
+## 经验怎样留下来
 
-## 写者身份（人与 agent 同读）
+每个帖子保留三层内容：
 
-任何访问知识库的执行体（人、DSH 会话、外部 runtime）都是有登记身份的写者：
+- **任务**：为什么做、从哪些材料出发、怎样算完成。
+- **答复**：执行结果、关键判断和依据，以及当前可接续的结论。
+- **评论**：针对具体答复的反馈、追问和下一次委托。
 
-- 署名用登记名：`agent-<host>`（如 DSH 派活会话）、`agent-<host>-<variant>`（不同组成的变体）；人用常用 handle。
-- 写义务：走 `tools/kb.js` 写入后自行 git commit（工具不代提交）；动帖前先看 `assigned` 与 current，别人在航的帖不并行写。
-- 认领是事务内 CAS：并发双 claim 恰一成功，失败方收到可读拒绝；接管他人帖子用 `--steal <answer-id>` 带凭证。
-- init/seed 均提供通用身份登记帖，使用 `node tools/kb.js query --tag meta` 定位。
+SQLite 保存内容，Git 记录版本，每帖生成一份可读 Markdown。答复和评论通过追加来保留来路，修正用新的答复表达。`posts/*.md` 是生成物；读写应走工具，Git 提交由调用者完成。
 
-## 深入阅读
+项目自身曾从 Windows 迁移到 Mac，并继续通过日常留下的帖子查询任务、接续工作，无需为迁移专门补写项目背景。发布验证也已覆盖真实 Agent 的回写、定向续做和新会话接手。详见 [演示与验证范围](docs/demo.md)。
 
-按需读：`SPEC.md`（目标）→ `FORMAT.md`（格式与校验）→ `CONCEPT.md`（决策轨迹）→ `CONTEXT.md`（术语）；设计决策见 `docs/adr/0001`–`0005`。Agent 执行体的工作纪律见 `.dsh/skills/` 下两个 SKILL.md。
+## 运行边界
 
-| 文档 | 内容 |
+这是 **0.20 候选版本**，仍在迭代。
+
+- 已验证组合为 **macOS arm64 + Node 25.8.0 + DSH 0.2.0-rc.2**；其他组合尚未随本发布线验收。
+- 真实工作循环，以及 Web 界面的新建会话、现存会话续聊和冷恢复回执，已有隔离验证。
+- 首发提供预构建安装。从源码重建所需的部分 DSH 构建依赖尚未全部公开。
+- 多人联网协作、任意运行时互调、完整无人值守容错尚未作为稳定能力交付。
+
+更多平台、并发与依赖说明见 [LIMITATIONS](docs/LIMITATIONS.md)。
+
+## 继续了解
+
+| 想做什么 | 从这里开始 |
 | --- | --- |
-| [docs/demo.md](docs/demo.md) | 短演示：CLI 可复现演示 + 真实协作案例（样例试跑 ≠ 协作验收） |
-| [docs/dsh-wiring.md](docs/dsh-wiring.md) | DSH 插件接线 + R4 八步实测协议 |
-| [docs/LIMITATIONS.md](docs/LIMITATIONS.md) | 平台/功能/成本限制（如实声明） |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Issue 指引与开发约定 |
-| [docs/release-0.20.0-draft.md](docs/release-0.20.0-draft.md) | 发布说明草稿 |
+| 建库、登记身份、创建第一帖 | [Quickstart](docs/quickstart.md) |
+| 让 DSH 中的 Agent 读写并接任务 | [插件接线](docs/dsh-wiring.md) |
+| 复现 CLI 演示、查看真实协作验证 | [Demo](docs/demo.md) |
+| 理解数据结构与阅读约定 | [FORMAT](FORMAT.md) · [Agent 阅读协议](.dsh/skills/forum-kb-read/SKILL.md) |
+| 提问题或贡献改进 | [CONTRIBUTING](CONTRIBUTING.md) |
 
-## 已知边界（首发快照）
-
-- 运行时零第三方 npm 依赖（CLI 零依赖；三个插件包只声明 peerDependencies，由 DSH 宿主供给）→ 安装免构建。**从源码重建**目前需要 `@deepseek-ai/dsh-tools` / `@deepseek-ai/dsh-typert-generator` / `@deepseek-ai/dsh-typert-protocol@0.2.0-rc.2`（构建期依赖，尚未全部在公共 npm 提供），源码构建暂不承诺。
-- 已验收组合：macOS（arm64）+ Node 25.8.0 + DSH 0.2.0-rc.2。其余平台/版本组合未验证，欢迎反馈。
-- `dsh-tool-forum-kb` 为纯 JS 源码（`lib/index.js` 即源码，无构建步骤）；host 与 client-ui 由 `src/` + tsdown 构建出 `lib/`（配方随库）。
-- 真实协作回路（委托→点名→认领→回写→反馈→续做→收尾→新会话接手）已在隔离环境以真实 agent 跑通（[docs/demo.md](docs/demo.md) B 段）；GUI `@派活` 回执项由 GUI 宿主会话单独验收中。
-
-## License
-
-[MIT](LICENSE) © chasen0315。第三方归属见 [NOTICE](NOTICE)。
+[MIT License](LICENSE) © chasen0315 · [第三方归属](NOTICE)
