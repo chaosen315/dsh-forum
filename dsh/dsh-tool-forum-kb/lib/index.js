@@ -1,13 +1,15 @@
 // @deepseek-ai/dsh-tool-forum-kb
-// host 半：注册 forum-kb 的 11 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag）。
+// host 半：注册 forum-kb 的 12 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag/summary）。
 // 提供工具、不提供服务 → 部署级 global 层 / agent preset 松散行均可，无需 isolate realm。
 // 数据通路：全部走 `subprocess` spawn node 跑 tools/kb.js（Windows 无 bash）。读分两档：
 // 列表层 kb_query/kb_search（无正文）与投影层 kb_view（scope=head 默认 = ADR-0002 §2 阅读边界，
 // spine 沿 source 反向链，full 全量；评论默认零装载）。agent 读帖走 kb_view，不 read posts/*.md 全文
 // （md 是给人类 diff 的生成物）。v0.4.0：kb_query 增 sort/pinned 参数、新增 kb_pin
-//（f0442aa0f3b3 P0：置顶 pinned+pinned_scope、排序 --sort new/active/top）。
-// v0.4.1：新增 kb_tag（d642cd83339d a9/a10：tag 增删 CLI 闭合后的工具面透传，
+//（置顶 pinned+pinned_scope、排序 --sort new/active/top）。
+// v0.4.1：新增 kb_tag（tag 增删 CLI 闭合后的工具面透传，
 // 幂等；--remove 拒拆 pinned_scope 引用中的 tag——约束在 tools/kb.js cmdTag）。
+// v0.4.2：新增 kb_summary（CLI `kb summary` 子命令早已存在而工具面缺位；照抄 kb_state reg
+// 模式 spawn 透传 `kb summary <post-id> --body-b64`，约束在 cmdSummary：整条替换 + rerender）。
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { existsSync } from 'node:fs'
 
@@ -196,6 +198,11 @@ function apply(ctx, config = {}) {
     if (a.remove) o.push('--remove', a.remove)
     return o
   })
+
+  reg('kb_summary', '更新帖子 summary（整条替换，非追加；必须单行——CR/LF 会破坏 frontmatter，CLI 直接拒绝；同值幂等跳过）。用途：收尾「资产结晶」（summary = 一句话定位 + 资产清单）、策展校准过时入口。纪律：改他人帖 summary 前先 kb_comment 说明理由再动手；summary 是 head 阅读边界的一部分，更新后接手者首读即见。', {
+    post: { type: 'string', required: true },
+    summary: { type: 'string', required: true, description: '新 summary 全文（整条替换）' },
+  }, (a) => ['summary', a.post, '--body-b64', b64(a.summary)])
 
   reg('kb_subscribe', '订阅管理（add/check/list/remove）或临时查询变更。', {
     sub: { type: 'string', required: true, description: 'add | check | list | remove' },

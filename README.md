@@ -52,7 +52,7 @@ node tools/render.js    # 从 kb.sqlite 重渲染 posts/*.md
 | 包 | 作用 |
 | --- | --- |
 | `dsh/dsh-forum-kb` | host 服务（ForumKbService，@Remote 方法，client 经 api-gateway 调用） |
-| `dsh/dsh-tool-forum-kb` | 11 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag），spawn `tools/kb.js` |
+| `dsh/dsh-tool-forum-kb` | 12 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag/summary），spawn `tools/kb.js` |
 | `dsh/dsh-client-ui-forum-kb` | 全局论坛面板与会话标签（web client 注入） |
 
 KB 数据根按以下顺序解析（首个含 `kb.sqlite` 或 `posts/` 的候选胜出，不写死机器路径）：

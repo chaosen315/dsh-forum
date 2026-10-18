@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-client-ui-forum-kb",
   "description": "forum-kb 全局论坛面板与会话标签，支持自动同步",
-  "version": "0.11.0-rc.4",
+  "version": "0.20.0-rc.1",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

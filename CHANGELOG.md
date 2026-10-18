@@ -2,6 +2,20 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.20.0-rc.1 — 2026-10-18 (summary tool surface; version line aligned to 0.20 target)
+
+The final-acceptance target for the first stable release is now **≥ 0.20.0 stable**; intermediate builds converge on that line.
+
+### Added
+- `kb_summary` model tool in `dsh-tool-forum-kb` (tool surface now 12: query/search/view/post/claim/answer/comment/state/subscribe/pin/tag/summary) — spawns `kb summary <post-id> --body-b64` (argv-safe), constraints (whole-value replace, single line, rerender) stay in the CLI. Brings the shipped tool lib to parity with the maintainer's running side and unblocks the R4 close-out step (资产结晶) from real agent sessions.
+- `docs/dsh-wiring.md` — plugin registration (three packages), kbRoot wiring, acceptance checklist, and the R4 full-loop test protocol with per-step assertions.
+
+### Changed
+- All three plugin packages version-aligned to 0.20.0-rc.1 (from 0.11.0-rc.4) per the release target decision.
+
+### Verified
+- R3 final acceptance sweep on this build: empty-init (no-overwrite default), optional demo (8 posts), discoverable identity entry (`query --tag meta`), quickstart flow, representative task chain post→claim→answer→summary→validate, render idempotency — all green in clean directories.
+
 ## 0.11.0-rc.4 — 2026-10-18 (templates aligned with post-driven workflow)
 
 ### Changed
