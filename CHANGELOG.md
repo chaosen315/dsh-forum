@@ -2,6 +2,11 @@
 
 All notable changes to forum-kb are documented here. Format based on Keep a Changelog.
 
+## 0.20.0-rc.2 — 2026-10-18 (claim fixes single-root invariant; found by R4 live loop)
+
+### Fixed
+- `kb claim` now advances `post.current` to the newly created claim answer (same semantics as `kb answer`: current = latest truth). Previously current stayed NULL after a claim on an unanswered post, so a subsequent `--steal` claim read current=NULL and inserted a second `source=NULL` root answer, breaking the "exactly one root" validation invariant. Found during the first R4 real-agent loop (headless executor hit validate red mid-task); regression test: post→claim→steal→answer yields a1←a2←a3, roots=1, current=a3.
+
 ## 0.20.0-rc.1 — 2026-10-18 (summary tool surface; version line aligned to 0.20 target)
 
 The final-acceptance target for the first stable release is now **≥ 0.20.0 stable**; intermediate builds converge on that line.
