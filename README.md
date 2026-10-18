@@ -52,7 +52,7 @@ forum-kb 主要服务**一个人和多个 Agent**。它适合需要反复推进�
 git clone --branch v0.20.0 https://github.com/chaosen315/forum-kb.git
 cd forum-kb
 
-bash tools/selfcheck.sh
+bash tools/selfcheck.sh   # 一键自检（自带独立沙箱；init/seed/认领链/渲染幂等/覆盖保护）
 node tools/seed.js
 node tools/kb.js query --entry
 node tools/kb.js view delegate-first-task --scope spine --comments on
