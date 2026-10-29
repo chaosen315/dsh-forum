@@ -20,7 +20,7 @@
 在一个尚不存在 `forum-kb-examples`、`forum-kb-lab` 的父目录中运行：
 
 ```bash
-git clone --branch main https://github.com/chaosen315/forum-kb.git forum-kb-examples
+git clone --branch main https://github.com/chaosen315/dsh-forum.git forum-kb-examples
 cd forum-kb-examples
 node examples/workflows/create-lab.js ../forum-kb-lab
 cd ../forum-kb-lab
@@ -49,7 +49,7 @@ forum-kb-lab/
 
 ## 让 Agent 真正开始
 
-把 DSH 的服务插件和工具插件 `kbRoot` 都指向刚生成的**绝对路径**，并让执行会话以该目录为工作区。接线方法见 [DSH 指南](https://github.com/chaosen315/forum-kb/blob/main/docs/dsh-wiring.md)。已有常用库时，建议用独立 DSH profile 练习。
+把 DSH 的服务插件和工具插件 `kbRoot` 都指向刚生成的**绝对路径**，并让执行会话以该目录为工作区。接线方法见 [DSH 指南](https://github.com/chaosen315/dsh-forum/blob/main/docs/dsh-wiring.md)。已有常用库时，建议用独立 DSH profile 练习。
 
 1. 打开对应任务帖。预置练习帖已有首条 answer，可直接在它下面派活；自己新建的帖先用「巩固 · answer」写一条委托锚点。
 2. 将用例里的委托粘贴到评论框，输入 `@` 并选择真实目标后发送，确认「已派」回执。
@@ -67,4 +67,4 @@ DSH 的 `kb_view` 默认读 head 且不加载评论；裸 CLI 为兼容界面，
 
 六篇可以独立使用。盘点的固定数量以初始库为准；反复练习建议创建另一个新目录。回退文件修改可使用自己保存的 Git 基线；帖子答复用追加更正保留来路。放弃整次练习时，只需将 DSH 切回原 `kbRoot` 并保留或移走练习目录，无需重建常用库。
 
-维护者可在公开源码仓库复跑 `node examples/workflows/verify-lab.js`：覆盖新目录创建、覆盖拒绝、源库隔离、引用与主干、渲染一致性，以及用例 01/02/06 的文件验收器。脚本不调用模型；本批材料未逐篇重新跑 DSH 模型与 GUI，已有真实工作循环的验证范围见 [Demo](https://github.com/chaosen315/forum-kb/blob/main/docs/demo.md)。
+维护者可在公开源码仓库复跑 `node examples/workflows/verify-lab.js`：覆盖新目录创建、覆盖拒绝、源库隔离、引用与主干、渲染一致性，以及用例 01/02/06 的文件验收器。脚本不调用模型；本批材料未逐篇重新跑 DSH 模型与 GUI，已有真实工作循环的验证范围见 [Demo](https://github.com/chaosen315/dsh-forum/blob/main/docs/demo.md)。

@@ -44,6 +44,6 @@ node tools/kb.js view lab-handoff --scope head --comments none
 
 停止旧目录的写入，将完整练习目录或受控仓库快照带到新电脑，保留数据库、tools、schema 和材料；重新指定 DSH 服务与工具的同一个 `kbRoot`。先跑 `node tools/validate.js`，再分别从 UI 与 Agent 工具读取 `lab-handoff`，确认 current 一致后继续。
 
-这一步练习的是**已有记录的可接续性**；复制文件不等于跨机同步或并发合并。若接机失败，保留原目录快照，先恢复原机接线。跨操作系统部署仍须按 [支持范围](https://github.com/chaosen315/forum-kb/blob/main/docs/LIMITATIONS.md) 单独验证。
+这一步练习的是**已有记录的可接续性**；复制文件不等于跨机同步或并发合并。若接机失败，保留原目录快照，先恢复原机接线。跨操作系统部署仍须按 [支持范围](https://github.com/chaosen315/dsh-forum/blob/main/docs/LIMITATIONS.md) 单独验证。
 
 [下一篇：盘点项目 →](03-project-snapshot.md) · [用例目录](README.md)
