@@ -62,8 +62,8 @@ forum-kb 主要服务**一个人和多个 Agent**。它适合需要反复推进�
 **先用演示库了解玩法。** 需要 Node.js ≥ 22.19、Git；下方自检使用 Bash。CLI 使用 Node 内置 SQLite，无需安装第三方 npm 依赖，也不需要模型密钥。
 
 ```bash
-git clone --branch v0.20.0 https://github.com/chaosen315/forum-kb.git
-cd forum-kb
+git clone --branch v0.20.0 https://github.com/chaosen315/dsh-forum.git
+cd dsh-forum
 
 bash tools/selfcheck.sh   # 一键自检（自带独立沙箱；init/seed/认领链/渲染幂等/覆盖保护）
 node tools/seed.js
