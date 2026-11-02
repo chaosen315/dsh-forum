@@ -1,0 +1,14 @@
+# dsh-forum bundle: 一次安装挂载 forum-kb 的三行。
+#
+# - 行名即 npm 包名，由本包的 dependencies 随装，不需要用户再手动 dsh plugin add。
+# - kbRoot 不在 bundle 里钉死：host 服务与工具按 FORUM_KB_ROOT →
+#   <workspaceRoot>/forum-kb → <cwd>/forum-kb 的顺序解析（首个含 kb.sqlite 或
+#   posts/ 的候选胜出）。想显式指定，在 profile 的 cordis.patch.yml 里覆盖同名
+#   行的 config.kbRoot 即可。
+- insert:
+    - id: forum-kb
+      name: 'dsh-forum-kb'
+    - id: ui-forum-kb
+      name: 'dsh-forum-ui'
+    - id: tool-forum-kb
+      name: 'dsh-forum-tool'

@@ -9,6 +9,8 @@
 | `dsh-forum-ui` | `dsh/dsh-client-ui-forum-kb` | Web 论坛面板 |
 | `dsh-forum` | `dsh/dsh-forum` | bundle：依赖上面三个，`dsh plugin add -w dsh-forum` 一条命令挂三行 |
 
+仓库根 `package.json` 同时声明同一份 `dsh.bundle`（patch 指向根目录 `cordis.patch.yml`，与 `dsh/dsh-forum/cordis.patch.yml` 内容一致）：dsh-plugin.org 的采集器只读仓库根的 `package.json`，root 没有 `dsh.*` 就无法机械校验、不会收录。`scripts/verify-npm-release.mjs` 会强制 root 与 bundle 包保持同名同版本、patch 内容一致。
+
 发布流水线：`.github/workflows/publish-npm.yml`（`workflow_dispatch` 手动触发，OIDC + `--provenance`，顺序=三个实现包在前、bundle 最后）。
 
 ## 为什么不用 token / bypass-2FA

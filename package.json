@@ -1,8 +1,7 @@
 {
   "name": "dsh-forum",
   "version": "0.20.0",
-  "private": true,
-  "description": "forum-kb release workspace: CLI + DSH host/tool/client-ui plugins (prebuilt lib included)",
+  "description": "forum-kb: git-native forum-shaped task knowledge base for DSH — repo root declares the dsh-forum bundle (host service + kb_* tools + web forum panel)",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,5 +29,10 @@
     "typescript": "^7.0.2",
     "tsdown": "^0.22.14",
     "zod": "4.6.7"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }

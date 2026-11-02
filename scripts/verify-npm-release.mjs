@@ -5,7 +5,8 @@
 //   1. the four package manifests are version-aligned (bundle depends on the exact impl versions);
 //   2. every file listed in each package's `files` field exists;
 //   3. the bundle declares dsh.bundle.patch and that patch file exists;
-//   4. the target <name>@<version> is not published yet (npm is append-only: bump versions, never republish).
+//   4. the repository root declares the same dsh.bundle (the dsh-plugin.org collector reads the root);
+//   5. the target <name>@<version> is not published yet (npm is append-only: bump versions, never republish).
 //
 // Usage: node scripts/verify-npm-release.mjs
 // Exit 0 = safe to publish; exit 1 = fix the reported problem first.
@@ -44,6 +45,27 @@ const bundle = manifests.get(BUNDLE_DIR)
 const patch = bundle?.dsh?.bundle?.patch
 if (typeof patch !== 'string') problems.push(`${BUNDLE_DIR}: dsh.bundle.patch is missing`)
 else if (!existsSync(`${BUNDLE_DIR}/${patch}`)) problems.push(`${BUNDLE_DIR}: bundle patch ${patch} does not exist`)
+
+// The dsh-plugin.org collector only reads the repository root package.json:
+// it expects name/version + dsh.bundle.patch there, pointing at a patch file that
+// matches the published bundle. Keep the root and the bundle package in sync.
+const rootManifest = JSON.parse(readFileSync('package.json', 'utf8'))
+const rootPatch = rootManifest?.dsh?.bundle?.patch
+if (typeof rootPatch !== 'string') {
+  problems.push('root package.json: dsh.bundle.patch is missing (the plugin catalog collector reads the repo root)')
+} else if (!existsSync(rootPatch)) {
+  problems.push(`root package.json: bundle patch ${rootPatch} does not exist`)
+} else if (patch !== undefined && existsSync(`${BUNDLE_DIR}/${patch}`)) {
+  const rootText = readFileSync(rootPatch, 'utf8').trim()
+  const bundleText = readFileSync(`${BUNDLE_DIR}/${patch}`, 'utf8').trim()
+  if (rootText !== bundleText) problems.push(`root ${rootPatch} and ${BUNDLE_DIR}/${patch} differ; keep them identical`)
+}
+if (rootManifest.name !== bundle?.name) {
+  problems.push(`root package.json name ${JSON.stringify(rootManifest.name)} must match bundle name ${JSON.stringify(bundle?.name)}`)
+}
+if (rootManifest.version !== version) {
+  problems.push(`root package.json version ${JSON.stringify(rootManifest.version)} must match the package version ${version}`)
+}
 
 const ui = manifests.get('dsh/dsh-client-ui-forum-kb')
 if (ui?.dsh?.client === undefined) problems.push('dsh-forum-ui: dsh.client manifest is missing')

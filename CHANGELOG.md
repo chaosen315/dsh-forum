@@ -8,6 +8,7 @@ All notable changes to forum-kb are documented here. Format based on Keep a Chan
 - `dsh-forum` bundle 包（`dsh/dsh-forum/`）：`dsh plugin --profile web add -w dsh-forum` 一条命令挂载 host 服务、`kb_*` 工具与论坛面板三行；`kbRoot` 仍按 `FORUM_KB_ROOT` / 约定路径解析，不在 bundle 里写死机器路径。
 - 三个插件包改为可发布到公共 npm 的名字：`dsh-forum-kb`（Host 服务）、`dsh-forum-tool`（模型工具）、`dsh-forum-ui`（Client UI）；补齐 repository / homepage / keywords / engines / files / LICENSE 等 npm 元数据，并同步更新源码与预构建 `lib/` 内的包名引用（typert remote 描述符与 host 注册保持一致）。
 - 根 `package.json` 补 `name` / `version` / `license` / `repository` / `keywords`，README 补「从 npm 安装」与「从仓库路径安装」两条安装路径，满足 dsh-plugin.org 上架对 README 安装命令与根包身份的要求。
+- 仓库根 `package.json` 声明 `dsh.bundle.patch: ./cordis.patch.yml`（根目录新增与 bundle 包内容一致的 patch），并把 `private` 去掉：dsh-plugin.org 采集器只读仓库根的 `package.json`，需要 root 本身可验证；`scripts/verify-npm-release.mjs` 增加 root 与 bundle 包的一致性校验。
 
 ### Changed
 - 宿主提供的 peer 依赖（`@deepseek-ai/*`、zod、react）统一标为 optional peer：pnpm 不再自动装一份重复的 DSH 运行时/服务实例，同时 `peerDependencies` 仍供 DSH 的插件兼容性门禁读取。
