@@ -1,6 +1,26 @@
 {
+  "name": "dsh-forum",
+  "version": "0.20.0",
   "private": true,
   "description": "forum-kb release workspace: CLI + DSH host/tool/client-ui plugins (prebuilt lib included)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaosen315/dsh-forum.git"
+  },
+  "homepage": "https://github.com/chaosen315/dsh-forum#readme",
+  "bugs": {
+    "url": "https://github.com/chaosen315/dsh-forum/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "forum",
+    "knowledge-base",
+    "task-handoff",
+    "agent"
+  ],
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.5",
     "@deepseek-ai/dsh-tools": "0.2.0-rc.2",

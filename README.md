@@ -85,7 +85,21 @@ node tools/kb.js view delegate-first-task --scope spine --comments on
 | `dsh-tool-forum-kb` | 让 Agent 在会话中使用 `kb_*` 工具读写帖子 |
 | `dsh-client-ui-forum-kb` | 在 DSH 中浏览论坛、查看引用、点名委托和反馈 |
 
-按 [DSH 接线指南](docs/dsh-wiring.md) 注册三个包，并让服务和工具的 `kbRoot` 指向同一个知识库目录。该目录需要包含 CLI 工具、schema 和初始化后的数据库；最简单的起点就是上面的仓库副本。
+### 安装命令（复制即用）
+
+```bash
+# 1. 准备一个知识库目录（<repo> = 本仓库 clone 目录；两种起点二选一）
+git clone https://github.com/chaosen315/dsh-forum.git
+cd dsh-forum
+node tools/init.js        # 空库 + 身份登记入口；想先体验演示库改用 node tools/seed.js
+
+# 2. 注册三个预构建插件（无需构建；在 <repo> 根目录执行）
+dsh plugin --profile web add -w ./dsh/dsh-forum-kb ./dsh/dsh-tool-forum-kb ./dsh/dsh-client-ui-forum-kb
+```
+
+重启 `dsh web` 后，在 profile 的 `cordis.patch.yml` 里给 `forum-kb` 与 `tool-forum-kb` 行补 `config.kbRoot: <repo 绝对路径>`（或启动前设置环境变量 `FORUM_KB_ROOT=<repo 绝对路径>`），让服务与工具指向同一个知识库。
+
+逐项说明、`kbRoot` 解析顺序与验收清单见 [DSH 接线指南](docs/dsh-wiring.md)。
 
 接好后，在任务帖对应答复下输入 `@目标` 并发送评论，确认「已派」回执。新帖还没有答复时，先用「巩固 · answer」写一条委托锚点，再在其下点名。
 
