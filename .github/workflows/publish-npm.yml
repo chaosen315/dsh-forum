@@ -1,0 +1,58 @@
+name: publish-npm
+
+# Trusted publishing (OIDC) release pipeline for the four npm packages.
+#
+# One-time setup per package (see docs/release-npm.md):
+#   npm trust github <package> --file publish-npm.yml --repo chaosen315/dsh-forum
+# after enabling 2FA on the npm account. The first successful publish validates
+# the trust relationship (unvalidated configs expire after 48 hours).
+#
+# Publish order matters: dsh-forum (bundle) depends on the three implementation
+# packages at the exact same version, so they must exist first.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dist_tag:
+        description: "npm dist-tag"
+        type: string
+        default: latest
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-npm
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Use npm with trusted publishing support
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      - name: Preflight (versions, files, unpublished targets)
+        run: node scripts/verify-npm-release.mjs
+
+      - name: Publish implementation packages, then the bundle
+        env:
+          NPM_DIST_TAG: ${{ inputs.dist_tag || 'latest' }}
+        run: |
+          set -euo pipefail
+          for dir in dsh/dsh-forum-kb dsh/dsh-tool-forum-kb dsh/dsh-client-ui-forum-kb dsh/dsh-forum; do
+            name=$(node -p "require('./$dir/package.json').name")
+            version=$(node -p "require('./$dir/package.json').version")
+            echo "::group::publish $name@$version"
+            (cd "$dir" && npm publish --provenance --access public --tag "$NPM_DIST_TAG")
+            echo "::endgroup::"
+          done
