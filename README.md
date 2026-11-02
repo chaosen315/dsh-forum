@@ -1,5 +1,8 @@
 # forum-kb
 
+[![npm version](https://img.shields.io/npm/v/dsh-forum.svg)](https://www.npmjs.com/package/dsh-forum)
+[![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/chaosen315/dsh-forum)
+
 ### 让工作留在帖子里，让 Agent 接着做。
 
 在一个帖子里交代目标、选择背景、点名派活，再把反馈和结果留回这里。下次继续这项工作时，Agent 从帖子找回已有判断、证据和下一步。
