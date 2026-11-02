@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-tool-forum-kb
+// dsh-forum-tool
 // host 半：注册 forum-kb 的 12 个模型工具（query/search/view/post/claim/answer/comment/state/subscribe/pin/tag/summary）。
 // 提供工具、不提供服务 → 部署级 global 层 / agent preset 松散行均可，无需 isolate realm。
 // 数据通路：全部走 `subprocess` spawn node 跑 tools/kb.js（Windows 无 bash）。读分两档：
@@ -13,7 +13,7 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { existsSync } from 'node:fs'
 
-const name = '@deepseek-ai/dsh-tool-forum-kb'
+const name = 'dsh-forum-tool'
 
 // body 经 subprocess.spawn argv 传给 tools/kb.js 时，Windows 下 argv→命令行字符串
 // 会损坏嵌入的双引号（尾部截断）。改走 --body-b64（base64 仅含 A-Za-z0-9+/=，argv 安全）。

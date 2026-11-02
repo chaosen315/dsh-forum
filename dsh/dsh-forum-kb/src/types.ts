@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-forum-kb — 公共边界类型。
+// dsh-forum-kb — 公共边界类型。
 // typert 分析器要求：Remote 边界类型必须从【非根】公共子路径导出，否则
 // `Remote boundary type ... must be exported from a public non-root type subpath`。
 // 故独立成 ./types（package.json exports["./types"] → lib/types.js ← src/types.ts）。

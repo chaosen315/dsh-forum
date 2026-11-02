@@ -1,6 +1,6 @@
 {
-  "name": "@deepseek-ai/dsh-tool-forum-kb",
-  "description": "forum-kb 工具：query/search/view/post/claim/answer/comment/state/subscribe/pin/tag（宿主平面，提供工具、不提供服务）",
+  "name": "dsh-forum-tool",
+  "description": "forum-kb model tools for DeepSeek Harness: kb_query / kb_search / kb_view / kb_post / kb_claim / kb_answer / kb_comment / kb_summary etc.",
   "version": "0.20.0",
   "type": "module",
   "main": "lib/index.js",
@@ -12,5 +12,40 @@
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
     "@deepseek-ai/dsh-tools": "^0.2.0-rc.2"
+  },
+  "author": "chaosen315 (https://github.com/chaosen315)",
+  "homepage": "https://github.com/chaosen315/dsh-forum#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaosen315/dsh-forum.git",
+    "directory": "dsh/dsh-tool-forum-kb"
+  },
+  "bugs": {
+    "url": "https://github.com/chaosen315/dsh-forum/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "forum",
+    "knowledge-base",
+    "agent",
+    "tools",
+    "model-tools",
+    "kb"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "files": [
+    "lib/index.js"
+  ],
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
   }
 }

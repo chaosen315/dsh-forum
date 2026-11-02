@@ -1,0 +1,52 @@
+{
+  "name": "dsh-forum",
+  "version": "0.20.0",
+  "description": "forum-kb distribution bundle for DeepSeek Harness: one install wires the forum host service, the kb_* model tools and the web forum panel",
+  "type": "module",
+  "author": "chaosen315 (https://github.com/chaosen315)",
+  "license": "MIT",
+  "homepage": "https://github.com/chaosen315/dsh-forum#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaosen315/dsh-forum.git",
+    "directory": "dsh/dsh-forum"
+  },
+  "bugs": {
+    "url": "https://github.com/chaosen315/dsh-forum/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "forum",
+    "knowledge-base",
+    "agent",
+    "task-handoff"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": "^0.2.0-rc.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "dsh-forum-kb": "0.20.0",
+    "dsh-forum-tool": "0.20.0",
+    "dsh-forum-ui": "0.20.0"
+  }
+}

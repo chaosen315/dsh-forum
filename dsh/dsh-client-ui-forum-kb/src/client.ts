@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-client-ui-forum-kb — client（浏览器半）：论坛面板。
+// dsh-forum-ui — client（浏览器半）：论坛面板。
 // 注册到 conversation.view 的「论坛」tab（list 槽，session scope，一次渲染一个 tab）。
 //
 // v0.3（帖子 forum-kb-l3-comment-sink 阶段1，human 三条目标）：
@@ -90,7 +90,7 @@
 //    回执行芯片显示已落权限档。
 //
 // v0.8.1（434b349bae90 a4 巡查 hotfix 的补完）：client bundle 构建期内联 remote schema 副本
-//（TYPERT_REMOTE = @deepseek-ai/dsh-forum-kb/remote 的构建期快照）——host 半 PostView 补
+//（TYPERT_REMOTE = dsh-forum-kb/remote 的构建期快照）——host 半 PostView 补
 // pinned 后若只重启进程，浏览器仍用旧 schema parse 响应，pinned 在进 normalizeView 前被
 // 客户端 stub 静默剥离（human 复测「仍看不到取消置顶」坐实）。本版源码零逻辑改动，仅随
 // 重建换 BUILD 戳 + 内联修复后的 remote schema。教训：host schema 修复必须连跑 client
@@ -106,16 +106,16 @@
 // 仍局限在插件内：host/Remote/tools-kb 合同与语义未改（搜索写库、并发截断等后端问题另帖跟踪）。
 //
 // 关键点：remote.forumKb 不在 dsh-api-remotes 的构建期挂载清单里，本面板自行 $mount
-// @deepseek-ai/dsh-forum-kb/remote（tsdown 连同 zod 打进 bundle，运行期不 require
+// dsh-forum-kb/remote（tsdown 连同 zod 打进 bundle，运行期不 require
 // forum-kb 模块）。$mount 走 callerCtx.effect，插件卸载时自动撤销挂载与面板注册。
-import { TYPERT_REMOTE } from "@deepseek-ai/dsh-forum-kb/remote"
+import { TYPERT_REMOTE } from "dsh-forum-kb/remote"
 import React from "react"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
 import { createRefreshLoop } from "./refresh"
 import { searchHit } from "./search"
 
-export const name = "@deepseek-ai/dsh-client-ui-forum-kb"
+export const name = "dsh-forum-ui"
 
 // 构建版本戳：子导航右端可见，用于确认浏览器加载的是哪次 bundle。
 // 教训：tsdown 输出被过滤时可能假成功——bundle 未换新则描述符缺 view → 秒回退。

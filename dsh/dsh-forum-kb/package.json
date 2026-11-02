@@ -1,6 +1,6 @@
 {
-  "name": "@deepseek-ai/dsh-forum-kb",
-  "description": "forum-kb host 服务（ForumKbService，@Remote 方法，client 经 api-gateway 调用）",
+  "name": "dsh-forum-kb",
+  "description": "forum-kb host service for DeepSeek Harness: post read/write, dispatch and thread state (@Remote service consumed by dsh-forum-ui over api-gateway)",
   "version": "0.20.0",
   "type": "module",
   "main": "lib/index.js",
@@ -32,5 +32,45 @@
     "@deepseek-ai/dsh-llm": "^0.2.0-rc.2",
     "@deepseek-ai/dsh-typert-protocol": "^0.2.0-rc.2",
     "zod": "^4.4.3"
+  },
+  "author": "chaosen315 (https://github.com/chaosen315)",
+  "homepage": "https://github.com/chaosen315/dsh-forum#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaosen315/dsh-forum.git",
+    "directory": "dsh/dsh-forum-kb"
+  },
+  "bugs": {
+    "url": "https://github.com/chaosen315/dsh-forum/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "forum",
+    "knowledge-base",
+    "agent",
+    "host-service",
+    "typert"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-typert-protocol": {
+      "optional": true
+    },
+    "zod": {
+      "optional": true
+    }
   }
 }

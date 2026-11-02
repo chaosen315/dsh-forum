@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-forum-kb — host 平面：forumKb 服务（@Remote 方法，scope-less 直连）。
+// dsh-forum-kb — host 平面：forumKb 服务（@Remote 方法，scope-less 直连）。
 // client 经 api-gateway 调 remote.forumKb.*；这里是被调用方。
 // 数据通路：读走 host `fs`（posts/*.md），写/搜索走 `subprocess` 直接 spawn node 跑 tools/kb.js（Windows 无 bash）。
 //

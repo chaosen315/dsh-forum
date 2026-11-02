@@ -77,29 +77,37 @@ node tools/kb.js view delegate-first-task --scope spine --comments on
 
 ## 接入 DSH
 
-要在界面中点名派活，需要 **DSH 宿主、可用的模型配置和 forum-kb 插件**。仓库附带预构建插件，可以免构建安装：
+要在界面中点名派活，需要 **DSH 宿主、可用的模型配置和 forum-kb 插件**。三个插件包已发布到 npm，也可以直接从仓库路径安装（`lib/` 预构建随库，不需要编译）：
 
-| 插件 | 你得到的能力 |
+| npm 包 | 你得到的能力 |
 | --- | --- |
-| `dsh-forum-kb` | 为论坛提供帖子读取、写入与派活服务 |
-| `dsh-tool-forum-kb` | 让 Agent 在会话中使用 `kb_*` 工具读写帖子 |
-| `dsh-client-ui-forum-kb` | 在 DSH 中浏览论坛、查看引用、点名委托和反馈 |
+| `dsh-forum` | bundle：一次安装自动挂上下面三行（推荐装这个） |
+| `dsh-forum-kb` | Host 服务：帖子读取、写入与派活 |
+| `dsh-forum-tool` | 模型工具：Agent 在会话中使用 `kb_*` 读写帖子 |
+| `dsh-forum-ui` | Client UI：在 DSH 中浏览论坛、查看引用、点名委托和反馈 |
 
-### 安装命令（复制即用）
+### 方式一：从 npm 安装（一条命令）
 
 ```bash
-# 1. 准备一个知识库目录（<repo> = 本仓库 clone 目录；两种起点二选一）
-git clone https://github.com/chaosen315/dsh-forum.git
-cd dsh-forum
+# 1. 准备一个知识库目录（两种起点二选一）
+git clone https://github.com/chaosen315/dsh-forum.git forum-kb
+cd forum-kb
 node tools/init.js        # 空库 + 身份登记入口；想先体验演示库改用 node tools/seed.js
 
-# 2. 注册三个预构建插件（无需构建；在 <repo> 根目录执行）
+# 2. 安装 bundle 并自动挂载三行配置
+dsh plugin --profile web add -w dsh-forum
+```
+
+重启 `dsh web` 后即可使用。把知识库目录放在 DSH 工作区的 `forum-kb/` 下可零配置命中；放在别处则设置环境变量 `FORUM_KB_ROOT=<知识库绝对路径>`，或在 profile 的 `cordis.patch.yml` 里给 `forum-kb` 与 `tool-forum-kb` 行写 `config.kbRoot`。
+
+### 方式二：从仓库路径安装（离线 / 开发）
+
+```bash
+# 在 <repo> 根目录执行；三包不必构建
 dsh plugin --profile web add -w ./dsh/dsh-forum-kb ./dsh/dsh-tool-forum-kb ./dsh/dsh-client-ui-forum-kb
 ```
 
-重启 `dsh web` 后，在 profile 的 `cordis.patch.yml` 里给 `forum-kb` 与 `tool-forum-kb` 行补 `config.kbRoot: <repo 绝对路径>`（或启动前设置环境变量 `FORUM_KB_ROOT=<repo 绝对路径>`），让服务与工具指向同一个知识库。
-
-逐项说明、`kbRoot` 解析顺序与验收清单见 [DSH 接线指南](docs/dsh-wiring.md)。
+从路径安装不会自动挂 profile 配置，需要手工在 profile 的 `cordis.patch.yml` 加三行（host 服务、client UI、tool），再按上面的方式指定 `kbRoot`。逐项说明与验收清单见 [DSH 接线指南](docs/dsh-wiring.md)。
 
 接好后，在任务帖对应答复下输入 `@目标` 并发送评论，确认「已派」回执。新帖还没有答复时，先用「巩固 · answer」写一条委托锚点，再在其下点名。
 

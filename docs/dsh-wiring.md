@@ -17,7 +17,17 @@ node tools/init.js        # 空库 + 身份登记帖
 node tools/validate.js    # 全绿再继续
 ```
 
-## 2. 挂三包（免构建，lib 随库）
+## 2. 安装插件（两种方式，免构建）
+
+### 方式 A：从 npm 安装 bundle（推荐）
+
+```bash
+dsh plugin --profile <profile> add -w dsh-forum
+```
+
+`dsh-forum` 是 bundle 包，依赖并随装 `dsh-forum-kb`（Host 服务）、`dsh-forum-tool`（`kb_*` 工具）、`dsh-forum-ui`（论坛面板），安装后自动把三行写进 profile 的 bundle 列表，不需要手工改 `cordis.patch.yml`。重启宿主生效。
+
+### 方式 B：从仓库路径挂三包（离线 / 开发）
 
 ```bash
 dsh plugin --profile <profile> add <repo>/dsh/dsh-forum-kb
@@ -25,7 +35,9 @@ dsh plugin --profile <profile> add <repo>/dsh/dsh-tool-forum-kb
 dsh plugin --profile <profile> add <repo>/dsh/dsh-client-ui-forum-kb   # 可选：web 论坛面板
 ```
 
-`<profile>` 不存在时按 DSH 提示创建。peer 依赖（zod、cordis 等）由宿主环境提供/经包管理器拉取。
+从路径安装的三包不带 bundle 元数据，需要手工在 profile 的 `cordis.patch.yml` 里加三行（行 id 建议 `forum-kb` / `ui-forum-kb` / `tool-forum-kb`，`name` 分别填 `dsh-forum-kb` / `dsh-forum-ui` / `dsh-forum-tool`）。
+
+`<profile>` 不存在时按 DSH 提示创建。peer 依赖（`@deepseek-ai/*`、zod、react 等）由宿主运行时提供：包内把它们标为 optional peer，DSH 的模块解析会路由到安装目录里的同一份实例，不要自行在 profile 里装这些包，否则会出现重复的 cordis/服务实例。
 
 ## 3. 接线 kbRoot
 

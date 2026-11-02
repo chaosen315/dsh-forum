@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-client-ui-forum-kb — 列表搜索命中判定（v0.10.1，帖子 b0ad9a1965b8）。
+// dsh-forum-ui — 列表搜索命中判定（v0.10.1，帖子 b0ad9a1965b8）。
 //
 // 缺陷背景：搜索曾分两阶段且语义不一致——输入瞬间本地子串过滤（拆词 AND，字段
 // id/title/summary/assigned）先正确命中，约 250ms 后 host FTS（字面短语，仅索引

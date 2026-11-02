@@ -1,6 +1,6 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-forum-kb",
-  "description": "forum-kb 全局论坛面板与会话标签，支持自动同步",
+  "name": "dsh-forum-ui",
+  "description": "forum-kb web UI for DeepSeek Harness: global forum panel, post threads, references, @dispatch and feedback, with auto refresh",
   "version": "0.20.0",
   "type": "module",
   "main": "lib/index.js",
@@ -29,10 +29,45 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-forum-kb": "workspace:*",
+    "dsh-forum-kb": "0.20.0",
     "@types/react": "18.3.24",
     "dompurify": "^3.2.4",
     "marked": "^15.0.0",
     "zod": "4.6.7"
+  },
+  "author": "chaosen315 (https://github.com/chaosen315)",
+  "homepage": "https://github.com/chaosen315/dsh-forum#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaosen315/dsh-forum.git",
+    "directory": "dsh/dsh-client-ui-forum-kb"
+  },
+  "bugs": {
+    "url": "https://github.com/chaosen315/dsh-forum/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "forum",
+    "knowledge-base",
+    "agent",
+    "client-ui",
+    "web-ui"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js"
+  ],
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   }
 }

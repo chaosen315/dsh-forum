@@ -3,7 +3,7 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { DispatchInfoResult, DispatchOutcome, DispatchRequest, DispatchTarget, InCaseRow, OpenRefResult, PostRef, PostSummary, PostView, RefsView, SearchHit, ToolIndexEntry, WriteResult } from '@deepseek-ai/dsh-forum-kb/types'
+import type { DispatchInfoResult, DispatchOutcome, DispatchRequest, DispatchTarget, InCaseRow, OpenRefResult, PostRef, PostSummary, PostView, RefsView, SearchHit, ToolIndexEntry, WriteResult } from 'dsh-forum-kb/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$666f72756d4b62 {

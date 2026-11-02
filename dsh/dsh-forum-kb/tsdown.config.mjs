@@ -1,4 +1,4 @@
-// @deepseek-ai/dsh-forum-kb 构建：tsdown 打包 lib/index.js + lib/types.js，
+// dsh-forum-kb 构建：tsdown 打包 lib/index.js + lib/types.js，
 // typertPlugin 在 writeBundle 期跑 workspace 级生成：
 //   - analyze tsconfig.host.json（向上定位）references 的 host face；
 //   - 产出 packages/dsh-forum-kb/lib/typert.host.{js,d.ts}

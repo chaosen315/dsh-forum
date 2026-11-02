@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-  id: "@deepseek-ai/dsh-client-ui-forum-kb",
+  id: "dsh-forum-ui",
   factory: (require) => {
     var module = { exports: {} };
     var exports = module.exports;
@@ -5357,10 +5357,10 @@ const _deepseek_ai_dsh_forum_kb_forumKb_view_result$schema = () => _deepseek_ai_
 	}))
 });
 const TYPERT_REMOTE = {
-	package: "@deepseek-ai/dsh-forum-kb",
+	package: "dsh-forum-kb",
 	descriptors: [
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/answer",
+			id: "dsh-forum-kb#forumKb/answer",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "answer",
@@ -5371,13 +5371,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/answer:req",
+					typeSymbol: "dsh-forum-kb#forumKb/answer:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_answer_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_answer_result$schema
 			},
 			sourceLocation: {
@@ -5387,7 +5387,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/claim",
+			id: "dsh-forum-kb#forumKb/claim",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "claim",
@@ -5398,13 +5398,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/claim:req",
+					typeSymbol: "dsh-forum-kb#forumKb/claim:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_claim_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_claim_result$schema
 			},
 			sourceLocation: {
@@ -5414,7 +5414,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/comment",
+			id: "dsh-forum-kb#forumKb/comment",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "comment",
@@ -5425,13 +5425,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/comment:req",
+					typeSymbol: "dsh-forum-kb#forumKb/comment:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_comment_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_comment_result$schema
 			},
 			sourceLocation: {
@@ -5441,7 +5441,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/dispatch",
+			id: "dsh-forum-kb#forumKb/dispatch",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "dispatch",
@@ -5452,13 +5452,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb/types#DispatchRequest",
+					typeSymbol: "dsh-forum-kb/types#DispatchRequest",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_dispatch_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/dispatch:result",
+				typeSymbol: "dsh-forum-kb#forumKb/dispatch:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_dispatch_result$schema
 			},
 			sourceLocation: {
@@ -5468,7 +5468,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/dispatchInfo",
+			id: "dsh-forum-kb#forumKb/dispatchInfo",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "dispatchInfo",
@@ -5479,13 +5479,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/dispatchInfo:req",
+					typeSymbol: "dsh-forum-kb#forumKb/dispatchInfo:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_dispatchInfo_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#DispatchInfoResult",
+				typeSymbol: "dsh-forum-kb/types#DispatchInfoResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_dispatchInfo_result$schema
 			},
 			sourceLocation: {
@@ -5495,7 +5495,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/dispatchSessions",
+			id: "dsh-forum-kb#forumKb/dispatchSessions",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "dispatchSessions",
@@ -5503,7 +5503,7 @@ const TYPERT_REMOTE = {
 			parameters: [],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/dispatchSessions:result",
+				typeSymbol: "dsh-forum-kb#forumKb/dispatchSessions:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_dispatchSessions_result$schema
 			},
 			sourceLocation: {
@@ -5513,7 +5513,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/list",
+			id: "dsh-forum-kb#forumKb/list",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "list",
@@ -5521,7 +5521,7 @@ const TYPERT_REMOTE = {
 			parameters: [],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/list:result",
+				typeSymbol: "dsh-forum-kb#forumKb/list:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_list_result$schema
 			},
 			sourceLocation: {
@@ -5531,7 +5531,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/openRef",
+			id: "dsh-forum-kb#forumKb/openRef",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "openRef",
@@ -5542,13 +5542,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/openRef:req",
+					typeSymbol: "dsh-forum-kb#forumKb/openRef:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_openRef_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#OpenRefResult",
+				typeSymbol: "dsh-forum-kb/types#OpenRefResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_openRef_result$schema
 			},
 			sourceLocation: {
@@ -5558,7 +5558,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/pin",
+			id: "dsh-forum-kb#forumKb/pin",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "pin",
@@ -5569,13 +5569,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/pin:req",
+					typeSymbol: "dsh-forum-kb#forumKb/pin:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_pin_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_pin_result$schema
 			},
 			sourceLocation: {
@@ -5585,7 +5585,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/post",
+			id: "dsh-forum-kb#forumKb/post",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "post",
@@ -5597,13 +5597,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/post:req",
+					typeSymbol: "dsh-forum-kb#forumKb/post:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_post_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_post_result$schema
 			},
 			sourceLocation: {
@@ -5613,7 +5613,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/read",
+			id: "dsh-forum-kb#forumKb/read",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "read",
@@ -5624,13 +5624,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/read:id",
+					typeSymbol: "dsh-forum-kb#forumKb/read:id",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_read_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/read:result",
+				typeSymbol: "dsh-forum-kb#forumKb/read:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_read_result$schema
 			},
 			sourceLocation: {
@@ -5640,7 +5640,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/refs",
+			id: "dsh-forum-kb#forumKb/refs",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "refs",
@@ -5651,13 +5651,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/refs:req",
+					typeSymbol: "dsh-forum-kb#forumKb/refs:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_refs_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#RefsView",
+				typeSymbol: "dsh-forum-kb/types#RefsView",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_refs_result$schema
 			},
 			sourceLocation: {
@@ -5667,7 +5667,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/search",
+			id: "dsh-forum-kb#forumKb/search",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "search",
@@ -5678,13 +5678,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/search:req",
+					typeSymbol: "dsh-forum-kb#forumKb/search:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_search_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/search:result",
+				typeSymbol: "dsh-forum-kb#forumKb/search:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_search_result$schema
 			},
 			sourceLocation: {
@@ -5694,7 +5694,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/state",
+			id: "dsh-forum-kb#forumKb/state",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "state",
@@ -5706,13 +5706,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/state:req",
+					typeSymbol: "dsh-forum-kb#forumKb/state:req",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_state_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#WriteResult",
+				typeSymbol: "dsh-forum-kb/types#WriteResult",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_state_result$schema
 			},
 			sourceLocation: {
@@ -5722,7 +5722,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/toolIndex",
+			id: "dsh-forum-kb#forumKb/toolIndex",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "toolIndex",
@@ -5730,7 +5730,7 @@ const TYPERT_REMOTE = {
 			parameters: [],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/toolIndex:result",
+				typeSymbol: "dsh-forum-kb#forumKb/toolIndex:result",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_toolIndex_result$schema
 			},
 			sourceLocation: {
@@ -5740,7 +5740,7 @@ const TYPERT_REMOTE = {
 			}
 		},
 		{
-			id: "@deepseek-ai/dsh-forum-kb#forumKb/view",
+			id: "dsh-forum-kb#forumKb/view",
 			service: "forumKb",
 			namespace: "forumKb",
 			method: "view",
@@ -5751,13 +5751,13 @@ const TYPERT_REMOTE = {
 				source: "json",
 				codec: {
 					mode: "strict",
-					typeSymbol: "@deepseek-ai/dsh-forum-kb#forumKb/view:id",
+					typeSymbol: "dsh-forum-kb#forumKb/view:id",
 					create: _deepseek_ai_dsh_forum_kb_forumKb_view_parameter_0$schema
 				}
 			}],
 			result: {
 				mode: "strict",
-				typeSymbol: "@deepseek-ai/dsh-forum-kb/types#PostView",
+				typeSymbol: "dsh-forum-kb/types#PostView",
 				create: _deepseek_ai_dsh_forum_kb_forumKb_view_result$schema
 			},
 			sourceLocation: {
@@ -10051,7 +10051,7 @@ function searchHit(term, p, ftsIds) {
 }
 //#endregion
 //#region src/client.ts
-const name = "@deepseek-ai/dsh-client-ui-forum-kb";
+const name = "dsh-forum-ui";
 const BUILD = "v0.10.1-search-union";
 const T = {
 	bg: "#f9fafb",

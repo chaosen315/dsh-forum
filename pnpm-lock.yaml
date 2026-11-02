@@ -42,7 +42,7 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1
     devDependencies:
-      '@deepseek-ai/dsh-forum-kb':
+      'dsh-forum-kb':
         specifier: workspace:*
         version: link:../dsh-forum-kb
       dompurify:
