@@ -5,11 +5,17 @@
 // 列表层 kb_query/kb_search（无正文）与投影层 kb_view（scope=head 默认 = ADR-0002 §2 阅读边界，
 // spine 沿 source 反向链，full 全量；评论默认零装载）。agent 读帖走 kb_view，不 read posts/*.md 全文
 // （md 是给人类 diff 的生成物）。v0.4.0：kb_query 增 sort/pinned 参数、新增 kb_pin
-//（置顶 pinned+pinned_scope、排序 --sort new/active/top）。
-// v0.4.1：新增 kb_tag（tag 增删 CLI 闭合后的工具面透传，
+//（f0442aa0f3b3 P0：置顶 pinned+pinned_scope、排序 --sort new/active/top）。
+// v0.4.1：新增 kb_tag（d642cd83339d a9/a10：tag 增删 CLI 闭合后的工具面透传，
 // 幂等；--remove 拒拆 pinned_scope 引用中的 tag——约束在 tools/kb.js cmdTag）。
-// v0.4.2：新增 kb_summary（CLI `kb summary` 子命令早已存在而工具面缺位；照抄 kb_state reg
-// 模式 spawn 透传 `kb summary <post-id> --body-b64`，约束在 cmdSummary：整条替换 + rerender）。
+// v0.4.3（帖子 8bac81536bea，时间信号盲区修复）：kb_view 回传的 JSON 自带时间信号（顶层 now/tz、
+// post 与 answer/comment 的 createdAt + 服务端算好的相对年龄），kb_query/kb_search 列表行自带
+// ⏱ 创建/更新时间；本包仅更新工具描述（数据面全在 tools/kb.js）。重启后新会话生效。
+// v0.4.2：新增 kb_summary（221a106d9031，1e3982a556ed#a11.c1/a11 残留修复：CLI `kb summary`
+// 子命令早已存在而工具面缺位，DSH 会话只能 bash 裸 CLI；照抄 kb_state reg 模式 spawn 透传
+// `kb summary <post-id> --body-b64`，约束在 cmdSummary：整条替换 + rerender）。
+// package.json 同版追认 .build 既有 0.4.2/peer ^0.2.0-rc.2（此前源码 0.4.1/peer ^0.1.1-rc.2
+// 与 .build 清单漂移，lib 无差异），源码↔.build 两份同步，进程重启后静态包全局生效。
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { existsSync } from 'node:fs'
 
@@ -112,7 +118,7 @@ function apply(ctx, config = {}) {
     }))
   }
 
-  reg('kb_query', '查询 forum-kb 帖子（结构化过滤，返回帖子列表文本）。', {
+  reg('kb_query', '查询 forum-kb 帖子（结构化过滤，返回帖子列表文本，每行带 ⏱ 创建/更新相对年龄）。', {
     tag: { type: 'string', description: '按标签过滤' },
     state: { type: 'string', description: 'active | waiting | done | archived' },
     assigned: { type: 'string', description: '按负责 agent 过滤' },
@@ -130,11 +136,11 @@ function apply(ctx, config = {}) {
     return o
   })
 
-  reg('kb_search', '全文搜索 forum-kb 帖子内容（FTS5）。', {
+  reg('kb_search', '全文搜索 forum-kb 帖子内容（FTS5；命中行带 ⏱ 更新时间）。', {
     term: { type: 'string', required: true, description: '搜索关键词' },
   }, (a) => ['search', a.term])
 
-  reg('kb_view', '读一个帖子的结构化投影（只读，读帖唯一入口，勿 read posts/*.md 全文）。回 post 元数据 + query + answers（source 软引用链 / current 标记）。scope=head（默认）只装阅读边界 summary+query+current 单条 answer；scope=spine 追加沿 source 反向链到 root（追问「为何走到这」时的显式动作）；scope=full 全部 answer（兜底/对账）。评论默认零装载（草稿面），comments=on 才附 scope 内 answer 的评论线程——仅当 current 正文显式引用了某条评论。', {
+  reg('kb_view', '读一个帖子的结构化投影（只读，读帖唯一入口，勿 read posts/*.md 全文）。回 post 元数据 + query + answers（source 软引用链 / current 标记）。scope=head（默认）只装阅读边界 summary+query+current 单条 answer；scope=spine 追加沿 source 反向链到 root（追问「为何走到这」时的显式动作）；scope=full 全部 answer（兜底/对账）。评论默认零装载（草稿面），comments=on 才附 scope 内 answer 的评论线程——仅当 current 正文显式引用了某条评论。返回 JSON 自带时间信号：顶层 now/tz（本次读取时刻与时区锚点），post 的 createdAt/updatedAt + createdAge/updatedAge，每条 answer/comment 的 createdAt + age（服务端算好的相对年龄）——判断新旧用 age，不要自己算日期。', {
     post: { type: 'string', required: true, description: '帖子 id（slug 或哈希）' },
     scope: { type: 'string', description: 'head（默认）| spine | full' },
     comments: { type: 'string', description: 'none（默认）| on：附 scope 内 answer 的评论线程' },

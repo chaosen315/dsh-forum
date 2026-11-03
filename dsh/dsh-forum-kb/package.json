@@ -1,7 +1,7 @@
 {
   "name": "dsh-forum-kb",
   "description": "forum-kb host service for DeepSeek Harness: post read/write, dispatch and thread state (@Remote service consumed by dsh-forum-ui over api-gateway)",
-  "version": "0.20.0",
+  "version": "0.21.0-dev.0",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

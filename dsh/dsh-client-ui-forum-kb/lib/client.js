@@ -5352,9 +5352,59 @@ const _deepseek_ai_dsh_forum_kb_forumKb_view_result$schema = () => _deepseek_ai_
 		"comments": array(object({
 			"id": string(),
 			"author": string(),
-			"body": string()
-		}))
-	}))
+			"body": string(),
+			"createdAt": union([
+				_undefined(),
+				literal(null),
+				string()
+			]).optional(),
+			"age": union([
+				_undefined(),
+				literal(null),
+				string()
+			]).optional()
+		})),
+		"createdAt": union([
+			_undefined(),
+			literal(null),
+			string()
+		]).optional(),
+		"age": union([
+			_undefined(),
+			literal(null),
+			string()
+		]).optional()
+	})),
+	"now": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional(),
+	"tz": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional(),
+	"createdAt": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional(),
+	"createdAge": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional(),
+	"updatedAt": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional(),
+	"updatedAge": union([
+		_undefined(),
+		literal(null),
+		string()
+	]).optional()
 });
 const TYPERT_REMOTE = {
 	package: "dsh-forum-kb",
@@ -5382,7 +5432,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 331,
+				"line": 335,
 				"column": 9
 			}
 		},
@@ -5409,7 +5459,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 325,
+				"line": 329,
 				"column": 9
 			}
 		},
@@ -5436,7 +5486,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 337,
+				"line": 341,
 				"column": 9
 			}
 		},
@@ -5463,7 +5513,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 639,
+				"line": 643,
 				"column": 9
 			}
 		},
@@ -5490,7 +5540,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 397,
+				"line": 401,
 				"column": 9
 			}
 		},
@@ -5508,7 +5558,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 372,
+				"line": 376,
 				"column": 9
 			}
 		},
@@ -5526,7 +5576,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 249,
+				"line": 253,
 				"column": 9
 			}
 		},
@@ -5553,7 +5603,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 492,
+				"line": 496,
 				"column": 9
 			}
 		},
@@ -5580,7 +5630,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 349,
+				"line": 353,
 				"column": 9
 			}
 		},
@@ -5608,7 +5658,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 616,
+				"line": 620,
 				"column": 9
 			}
 		},
@@ -5635,7 +5685,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 289,
+				"line": 293,
 				"column": 9
 			}
 		},
@@ -5662,7 +5712,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 358,
+				"line": 362,
 				"column": 9
 			}
 		},
@@ -5689,7 +5739,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 311,
+				"line": 315,
 				"column": 9
 			}
 		},
@@ -5717,7 +5767,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 343,
+				"line": 347,
 				"column": 9
 			}
 		},
@@ -5735,7 +5785,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 475,
+				"line": 479,
 				"column": 9
 			}
 		},
@@ -5762,7 +5812,7 @@ const TYPERT_REMOTE = {
 			},
 			sourceLocation: {
 				"file": "packages/dsh-forum-kb/src/index.ts",
-				"line": 299,
+				"line": 303,
 				"column": 9
 			}
 		}
@@ -10052,7 +10102,7 @@ function searchHit(term, p, ftsIds) {
 //#endregion
 //#region src/client.ts
 const name = "dsh-forum-ui";
-const BUILD = "v0.10.1-search-union";
+const BUILD = "v0.10.2-time-signal";
 const T = {
 	bg: "#f9fafb",
 	surface: "#ffffff",
@@ -10126,10 +10176,14 @@ function normalizeView(v) {
 		source: a.source ?? null,
 		sourceRel: a.sourceRel ?? a.source_rel ?? null,
 		current: typeof a.current === "boolean" ? a.current : current != null && a.id === current,
+		createdAt: a.createdAt ?? null,
+		age: a.age ?? null,
 		comments: (Array.isArray(a.comments) ? a.comments : []).map((c) => ({
 			id: String(c.id ?? ""),
 			author: String(c.author ?? ""),
-			body: String(c.body ?? "")
+			body: String(c.body ?? ""),
+			createdAt: c.createdAt ?? null,
+			age: c.age ?? null
 		}))
 	}));
 	return {
@@ -10145,8 +10199,34 @@ function normalizeView(v) {
 		pinnedScope: v.pinnedScope ?? v.pinned_scope ?? null,
 		summary: String(v.summary ?? ""),
 		query: String(v.query ?? ""),
+		now: v.now ?? null,
+		tz: v.tz ?? null,
+		createdAt: v.createdAt ?? null,
+		createdAge: v.createdAge ?? null,
+		updatedAt: v.updatedAt ?? null,
+		updatedAge: v.updatedAge ?? null,
 		answers
 	};
+}
+function fmtLocalShort(iso) {
+	if (!iso) return null;
+	const d = new Date(iso);
+	if (Number.isNaN(d.getTime())) return null;
+	const p = (n) => String(n).padStart(2, "0");
+	return p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+function timeBadge(iso, age, label) {
+	const short = fmtLocalShort(iso);
+	if (!short) return null;
+	return react.default.createElement("span", {
+		title: label + "：" + short + "（" + (age || "相对年龄未知") + "）",
+		style: {
+			fontFamily: T.mono,
+			fontSize: 10.5,
+			color: T.text3,
+			whiteSpace: "nowrap"
+		}
+	}, label + " " + (age || short));
 }
 function StateBadge(state) {
 	return react.default.createElement("span", { style: {
@@ -10403,7 +10483,7 @@ function AnswerCard(a, actions) {
 		}, MonoChip(a.id, !!a.current, a.current ? "current · 当前真相" : "answer"), react.default.createElement("span", { style: {
 			fontSize: 12,
 			color: T.text2
-		} }, a.author), a.source ? MonoChip(`${REL_LABEL[a.sourceRel] ?? "关联自"} ${a.source}`, false, "source 软引用") : null, a.current ? react.default.createElement("span", { style: {
+		} }, a.author), a.source ? MonoChip(`${REL_LABEL[a.sourceRel] ?? "关联自"} ${a.source}`, false, "source 软引用") : null, timeBadge(a.createdAt, a.age, "写入"), a.current ? react.default.createElement("span", { style: {
 			fontFamily: T.mono,
 			fontSize: 10,
 			color: T.brand
@@ -10465,7 +10545,7 @@ function AnswerCard(a, actions) {
 			fontFamily: T.mono,
 			fontSize: 10,
 			color: T.text3
-		} }, c.id)), RichText(c.body, {
+		} }, c.id), timeBadge(c.createdAt, c.age, "")), RichText(c.body, {
 			fontSize: 12.5,
 			lineHeight: 1.55,
 			color: T.text2,
@@ -10547,7 +10627,7 @@ function PostHeader(post, pinAction, inCase, starAction) {
 		} }, "发起 " + post.author) : null, post.assigned ? react.default.createElement("span", { style: {
 			fontSize: 12,
 			color: T.text3
-		} }, "负责 " + post.assigned) : null, post.current ? MonoChip("current " + post.current, false, "当前真相指针") : null, ...(post.tags || []).map((tg) => MonoChip("#" + tg)), ...(inCase || []).map((r) => react.default.createElement("span", {
+		} }, "负责 " + post.assigned) : null, post.current ? MonoChip("current " + post.current, false, "当前真相指针") : null, post.createdAt ? timeBadge(post.createdAt, post.createdAge, "创建") : null, post.updatedAt ? timeBadge(post.updatedAt, post.updatedAge, "更新") : null, ...(post.tags || []).map((tg) => MonoChip("#" + tg)), ...(inCase || []).map((r) => react.default.createElement("span", {
 			key: "ic" + r.author,
 			title: `在案会话 ${r.sessionId}${r.agentPreset ? " · preset " + r.agentPreset : ""}（${r.live ? "活会话：@ 即增量续聊" : "冷会话：@ 触发冷恢复"}）`,
 			style: {
@@ -11573,6 +11653,7 @@ function ForumView(props) {
 		p.current ? "current " + p.current : null,
 		p.answers != null ? `${p.answers}a·${p.comments}c` : null,
 		p.pinned ? "📌" + (p.pinnedScope || "global") : null,
+		p.updatedAt ? "更新 " + (fmtLocalShort(p.updatedAt) || "") : null,
 		p.id
 	].filter(Boolean).join(" · ")), p.summary ? react.default.createElement("div", { style: {
 		fontSize: 12,

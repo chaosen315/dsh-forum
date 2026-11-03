@@ -48,11 +48,14 @@ export interface PostRef {
   anchor?: string
 }
 
-/** answer 下评论（二级草稿面，view 投影内嵌于所属 answer）。 */
+/** answer 下评论（二级草稿面，view 投影内嵌于所属 answer）。
+ *  时间信号（契约 v1，2026-10-31）：createdAt = 本地 ISO-8601 带偏移；age = 服务端算好的相对年龄。 */
 export interface CommentView {
   id: string
   author: string
   body: string
+  createdAt?: string | null
+  age?: string | null
 }
 
 /** 单条 answer 视图（view 投影：一级信号面 + source 软引用链 + 是否 current + 评论线程）。 */
@@ -64,6 +67,9 @@ export interface AnswerView {
   sourceRel: string | null
   current: boolean
   comments: CommentView[]
+  /** 时间信号（契约 v1）：写入时刻（本地 ISO+偏移）与相对年龄。 */
+  createdAt?: string | null
+  age?: string | null
 }
 
 /** 整帖结构化投影（view() 返回）：post 元数据 + query + answers。
@@ -87,6 +93,15 @@ export interface PostView {
   dependsOn?: PostRef[]
   query: string | null
   answers: AnswerView[]
+  /** 时间信号（契约 v1，2026-10-31 时间信号盲区修复）：now/tz = 本次读取时刻锚点与时区；
+   *  age 均以它为基准由服务端算好（agent 不做日期算术）。post 级 createdAt/updatedAt 为本地 ISO-8601
+   *  带偏移；updatedAt 语义 = 最后一次写入（含 comment）。 */
+  now?: string | null
+  tz?: string | null
+  createdAt?: string | null
+  createdAge?: string | null
+  updatedAt?: string | null
+  updatedAge?: string | null
 }
 
 /** 派活目标（v0.7.0，ADR-0004）：name = @ 的 author；preset = 发派时显式选择的组成

@@ -1,5 +1,7 @@
+import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { createUserMessage } from "@deepseek-ai/dsh-llm";
 import { installModelSelection } from "@deepseek-ai/dsh-agent";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
@@ -344,6 +346,13 @@ let ForumKbService = (() => {
 		/** 可选权限档服务（v0.9.0，部署 base 组合的 `permission` 行；缺席 = 权限选择不可用，
 		*  显式选择报错、缺省路径照旧部署默认）。 */
 		perms;
+		/** 自动同步状态缓存（.git/kb-auto-sync.json 的投影；见宿主侧 auto-sync 脚本）。
+		*  dsh 启动 + 每 3 分钟由本插件 spawn 同步（只 fetch/快进/validate），把「本次更新描述」
+		*  作为运行时上下文注入（与 `Current DSH file policy` 同机制；内容不变时不会重复注入）。 */
+		syncStatus = null;
+		syncStatusMtime = 0;
+		syncing = false;
+		syncTimer = null;
 		constructor(ctx, config = {}) {
 			super(ctx, "forumKb");
 			this.fs = ctx.get("fs");
@@ -367,6 +376,86 @@ let ForumKbService = (() => {
 			this.kbTried = resolved.tried;
 			this.kbFound = resolved.found;
 			this.mapFile = this.kb.replace(/\/forum-kb$/, "") + "/.forum-kb/dispatch-sessions.json";
+			this.installAutoSync(ctx);
+		}
+		/** 自动同步 + 运行时上下文注入（v0.11.0）。
+		*  - 上下文：SystemPrompt.context（与 sandbox 权限提示同机制），文本来自 auto-sync 脚本写的
+		*    「本次更新描述」；无更新/无告警时为空字符串 → agent-loop 不注入任何内容。
+		*  - 同步：启动即跑一次，之后每 3 分钟一次；只 fetch +（干净且仅落后时）ff-only + validate，
+		*    绝不 commit/push/merge；脏工作树/本地未推送/分叉 → 只写告警，不改本地。
+		*  - 离线/无凭据：fetch 失败会写一条告警上下文（提示手动 wake），不影响 dsh 启动。 */
+		installAutoSync(ctx) {
+			try {
+				ctx.inject(["systemPrompt"], (scope) => {
+					scope.systemPrompt.context({
+						name: "forum-kb:sync",
+						order: 900,
+						text: () => this.syncContextText()
+					});
+				});
+			} catch {}
+			this.runAutoSync();
+			try {
+				ctx.effect(() => {
+					this.syncTimer = setInterval(() => this.runAutoSync(), 18e4);
+					return () => {
+						if (this.syncTimer) clearInterval(this.syncTimer);
+					};
+				});
+			} catch {}
+		}
+		syncStatusPath() {
+			return join(this.kb, ".git", "kb-auto-sync.json");
+		}
+		/** 读同步状态（mtime 缓存）→ 返回注入用的上下文文本（空 = 不注入）。 */
+		syncContextText() {
+			if (!this.kbFound) return "";
+			try {
+				const p = this.syncStatusPath();
+				const st = statSync(p);
+				if (st.mtimeMs !== this.syncStatusMtime) {
+					this.syncStatus = JSON.parse(readFileSync(p, "utf8"));
+					this.syncStatusMtime = st.mtimeMs;
+				}
+			} catch {}
+			const s = this.syncStatus;
+			if (!s || typeof s.contextText !== "string") return "";
+			return s.contextText;
+		}
+		/** 后台 spawn 宿主侧 auto-sync 脚本（非阻塞；45s 兜底 kill）。 */
+		runAutoSync() {
+			if (this.syncing || !this.kbFound) return;
+			const script = join(this.kb, "DEPLOY", "auto-sync.mjs");
+			if (!existsSync(script)) return;
+			this.syncing = true;
+			try {
+				const child = spawn(process.execPath, [
+					script,
+					"--kb-root",
+					this.kb,
+					"--quiet"
+				], {
+					cwd: this.kb,
+					stdio: "ignore",
+					env: {
+						...process.env,
+						GIT_TERMINAL_PROMPT: "0"
+					}
+				});
+				const finish = () => {
+					this.syncing = false;
+				};
+				child.on("exit", finish);
+				child.on("error", finish);
+				const guard = setTimeout(() => {
+					try {
+						child.kill();
+					} catch {}
+				}, 45e3);
+				if (guard && typeof guard.unref === "function") guard.unref();
+			} catch {
+				this.syncing = false;
+			}
 		}
 		/** 路由表查询（author 小写归一；未命中 = undefined → 上层落部署默认）。 */
 		routeOf(target) {
@@ -1026,9 +1115,10 @@ let ForumKbService = (() => {
 				return [
 					`[forum-kb 派活·续] 你在帖子「${view.title}」（${view.id}）的 thread ${req.on} 下再次被 @${target} 点名。`,
 					`本条只递增量（${baseline}）——阅读边界 {summary, query, current} 与此前已递评论已在你上下文，需要时 kb_view（post=${view.id}）重读全文。`,
+					`- now：${view.now ?? "（未知）"}（${view.tz ?? "时区未知"}）——本消息与读面自带服务端算好的年龄（age），判断新旧以此为准，别自己算日期。`,
 					"",
 					`## 本轮新增（${fresh.length} 条）`,
-					fresh.length ? fresh.map((c) => `- ${c.id} · ${c.author}：${c.body}`).join("\n") : "（除触发评论外无新增——本次 @ 即续聊信号）",
+					fresh.length ? fresh.map((c) => `- ${c.id} · ${c.author} · ${c.createdAt ?? "（时间未知）"}（${c.age ?? "年龄未知"}）：${c.body}`).join("\n") : "（除触发评论外无新增——本次 @ 即续聊信号）",
 					"",
 					"## 触发评论",
 					req.author + "：" + req.body,
@@ -1040,10 +1130,10 @@ let ForumKbService = (() => {
 			for (const c of comments) {
 				if (isTrigger(c)) continue;
 				if (isSelf(c)) {
-					lines.push(`- ${c.id} · ${c.author}：（本人回执，折叠——kb_view 可读全文）`);
+					lines.push(`- ${c.id} · ${c.author} · ${c.createdAt ?? "（时间未知）"}（${c.age ?? "年龄未知"}）：（本人回执，折叠——kb_view 可读全文）`);
 					continue;
 				}
-				lines.push(`- ${c.id} · ${c.author}：${c.body}`);
+				lines.push(`- ${c.id} · ${c.author} · ${c.createdAt ?? "（时间未知）"}（${c.age ?? "年龄未知"}）：${c.body}`);
 			}
 			const thread = lines.length ? lines.join("\n") : "（本 thread 暂无其他评论）";
 			const cur = view.answers.find((a) => a.id === view.current);
@@ -1051,9 +1141,10 @@ let ForumKbService = (() => {
 				`[forum-kb 派活] 你在帖子「${view.title}」（${view.id}）的 thread ${req.on} 下被 @${target} 点名。`,
 				"",
 				"## 阅读边界（之后的展开靠你主动 pull：kb_view 可沿 source 追来路、kb_search/kb_query 找别的帖子）",
+				`- now：${view.now ?? "（未知）"}（${view.tz ?? "时区未知"}）——本消息与读面自带服务端算好的年龄（age），判断新旧以此为准，别自己算日期。`,
 				"- summary：" + view.summary,
 				"- query：" + (view.query ?? ""),
-				`- current ${view.current ?? "-"}：${cur ? cur.body : "（暂无）"}`,
+				`- current ${view.current ?? "-"}${cur && cur.createdAt ? "（写入 " + cur.createdAt + "，" + (cur.age ?? "年龄未知") + "）" : ""}：${cur ? cur.body : "（暂无）"}`,
 				`- 本 thread（${req.on} 评论区，${comments.length} 条）：`,
 				thread,
 				"",
@@ -1064,6 +1155,7 @@ let ForumKbService = (() => {
 				"- 身份：" + target + "（写 KB 时 author/`as` 用它）",
 				`- 进展与结论先回本 thread：kb_comment（post=${view.id}, on=${req.on}，草稿面）；有可复用资产再 kb_answer 巩固（source=${view.current ?? req.on}，会移动 current）。`,
 				"- human 会在此 thread 多轮 @ 你续聊：后续派活只递增量（新增评论 + 触发评论），投影与已递评论不重发；历史上下文留在你会话里，丢失背景时 kb_view 重读。",
+				"- 时间信号：派活消息与 kb_view 自带 now / createdAt / age（服务端算好）；判断新旧、引用时间一律用它们，不要凭上下文里的旧采样时间推算。",
 				"- 只在本 thread 汇报，不要另开帖子；读多少、读到哪由你自己决定。"
 			].join("\n");
 		}

@@ -1,7 +1,7 @@
 {
   "name": "dsh-forum-ui",
   "description": "forum-kb web UI for DeepSeek Harness: global forum panel, post threads, references, @dispatch and feedback, with auto refresh",
-  "version": "0.20.0",
+  "version": "0.21.0-dev.0",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -29,7 +29,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "dsh-forum-kb": "0.20.0",
+    "dsh-forum-kb": "0.21.0-dev.0",
     "@types/react": "18.3.24",
     "dompurify": "^3.2.4",
     "marked": "^15.0.0",

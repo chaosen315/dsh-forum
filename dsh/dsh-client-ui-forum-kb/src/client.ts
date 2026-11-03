@@ -108,6 +108,11 @@
 // 关键点：remote.forumKb 不在 dsh-api-remotes 的构建期挂载清单里，本面板自行 $mount
 // dsh-forum-kb/remote（tsdown 连同 zod 打进 bundle，运行期不 require
 // forum-kb 模块）。$mount 走 callerCtx.effect，插件卸载时自动撤销挂载与面板注册。
+// v0.10.2（帖子 8bac81536bea，时间信号盲区修复）：详情页 / 列表页展示服务端时间信号——
+// post 头卡「创建/更新 + 相对年龄」，answer 卡「写入 + 年龄」，评论行时间；列表行 meta 行加
+// 更新时间（本地短格式）。数据源 = host v0.10 的 PostView 时间字段（createdAt/updatedAt/
+// createdAge/updatedAge + answer/comment 的 createdAt/age）；host 未重启时字段缺席 → 优雅降级不显示，
+// 列表行的短格式时间可由旧 frontmatter 字段直接渲染（不依赖 host 升级）。
 import { TYPERT_REMOTE } from "dsh-forum-kb/remote"
 import React from "react"
 import { marked } from "marked"
@@ -119,7 +124,7 @@ export const name = "dsh-forum-ui"
 
 // 构建版本戳：子导航右端可见，用于确认浏览器加载的是哪次 bundle。
 // 教训：tsdown 输出被过滤时可能假成功——bundle 未换新则描述符缺 view → 秒回退。
-const BUILD = "v0.10.1-search-union"
+const BUILD = "v0.10.2-time-signal"
 
 // ---- 设计 token（与 context-composition.html 同源，保持视觉主题统一）----
 const T = {
@@ -166,8 +171,11 @@ function normalizeView(v: any) {
     source: a.source ?? null,
     sourceRel: a.sourceRel ?? a.source_rel ?? null,
     current: typeof a.current === "boolean" ? a.current : current != null && a.id === current,
+    createdAt: a.createdAt ?? null,
+    age: a.age ?? null,
     comments: (Array.isArray(a.comments) ? a.comments : []).map((c: any) => ({
       id: String(c.id ?? ""), author: String(c.author ?? ""), body: String(c.body ?? ""),
+      createdAt: c.createdAt ?? null, age: c.age ?? null,
     })),
   }))
   return {
@@ -177,8 +185,28 @@ function normalizeView(v: any) {
     assigned: v.assigned ?? null, entry: !!v.entry,
     pinned: !!v.pinned, pinnedScope: v.pinnedScope ?? v.pinned_scope ?? null,
     summary: String(v.summary ?? ""), query: String(v.query ?? ""),
+    now: v.now ?? null, tz: v.tz ?? null,
+    createdAt: v.createdAt ?? null, createdAge: v.createdAge ?? null,
+    updatedAt: v.updatedAt ?? null, updatedAge: v.updatedAge ?? null,
     answers,
   }
+}
+
+// ---- 时间信号显示（契约 v1，2026-10-31）：优先用 host 算好的相对年龄，退化到客户端本地短格式 ----
+function fmtLocalShort(iso: string | null | undefined): string | null {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  const p = (n: number) => String(n).padStart(2, "0")
+  return p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes())
+}
+function timeBadge(iso: string | null | undefined, age: string | null | undefined, label: string) {
+  const short = fmtLocalShort(iso)
+  if (!short) return null
+  return React.createElement("span", {
+    title: label + "：" + short + "（" + (age || "相对年龄未知") + "）",
+    style: { fontFamily: T.mono, fontSize: 10.5, color: T.text3, whiteSpace: "nowrap" },
+  }, label + " " + (age || short))
 }
 
 function paras(t: string): string[] {
@@ -313,6 +341,7 @@ function AnswerCard(a: any, actions?: { onComment: (id: string) => void; onQuote
       MonoChip(a.id, !!a.current, a.current ? "current · 当前真相" : "answer"),
       React.createElement("span", { style: { fontSize: 12, color: T.text2 } }, a.author),
       a.source ? MonoChip(`${REL_LABEL[a.sourceRel] ?? "关联自"} ${a.source}`, false, "source 软引用") : null,
+      timeBadge(a.createdAt, a.age, "写入"),
       a.current ? React.createElement("span", { style: { fontFamily: T.mono, fontSize: 10, color: T.brand } }, "current") : null,
       actions ? React.createElement("span", { style: { marginLeft: "auto", display: "inline-flex", gap: 6 } },
         React.createElement("button", { onClick: () => actions!.onComment(a.id), style: ghostBtn({ fontSize: 11, padding: "2px 8px" }), title: `在 ${a.id} 下写评论（草稿）` }, "评论"),
@@ -327,6 +356,7 @@ function AnswerCard(a: any, actions?: { onComment: (id: string) => void; onQuote
           React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 8 } },
             React.createElement("span", { style: { fontSize: 12, fontWeight: 600, color: T.text1 } }, c.author),
             React.createElement("span", { style: { fontFamily: T.mono, fontSize: 10, color: T.text3 } }, c.id),
+            timeBadge(c.createdAt, c.age, ""),
           ),
           RichText(c.body, { fontSize: 12.5, lineHeight: 1.55, color: T.text2, marginTop: 2 }, c.id),
         ))),
@@ -358,6 +388,8 @@ function PostHeader(post: any, pinAction?: { onPin: () => void } | null, inCase?
       post.author ? React.createElement("span", { style: { fontSize: 12, color: T.text3 } }, "发起 " + post.author) : null,
       post.assigned ? React.createElement("span", { style: { fontSize: 12, color: T.text3 } }, "负责 " + post.assigned) : null,
       post.current ? MonoChip("current " + post.current, false, "当前真相指针") : null,
+      post.createdAt ? timeBadge(post.createdAt, post.createdAge, "创建") : null,
+      post.updatedAt ? timeBadge(post.updatedAt, post.updatedAge, "更新") : null,
       ...(post.tags || []).map((tg: string) => MonoChip("#" + tg)),
       // 在案区（v0.7.0 ADR-0004）：该帖 (post, author) → 会话映射的只读投影（dispatchInfo
       // {post} 形状），事后可查证「续聊还是冷恢复」。host 未升级时端点缺席 → 区不出现。
@@ -1090,7 +1122,7 @@ function ForumView(props: { forumKb: any }) {
       }, (freq && freq.starred) ? "⭐" : "☆"),
     ),
     React.createElement("div", { style: { fontFamily: T.mono, fontSize: 11, color: T.text3, marginTop: 4 } },
-      [p.assigned ? "负责 " + p.assigned : null, p.current ? "current " + p.current : null, p.answers != null ? `${p.answers}a·${p.comments}c` : null, p.pinned ? "📌" + (p.pinnedScope || "global") : null, p.id].filter(Boolean).join(" · ")),
+      [p.assigned ? "负责 " + p.assigned : null, p.current ? "current " + p.current : null, p.answers != null ? `${p.answers}a·${p.comments}c` : null, p.pinned ? "📌" + (p.pinnedScope || "global") : null, p.updatedAt ? "更新 " + (fmtLocalShort(p.updatedAt) || "") : null, p.id].filter(Boolean).join(" · ")),
     p.summary ? React.createElement("div", { style: { fontSize: 12, color: T.text2, marginTop: 3, display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: 2, overflow: "hidden" } }, p.summary) : null,
   )
 

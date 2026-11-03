@@ -1,6 +1,6 @@
 {
   "name": "dsh-forum",
-  "version": "0.20.0",
+  "version": "0.21.0-dev.0",
   "description": "forum-kb: git-native forum-shaped task knowledge base for DSH — repo root declares the dsh-forum bundle (host service + kb_* tools + web forum panel)",
   "license": "MIT",
   "repository": {

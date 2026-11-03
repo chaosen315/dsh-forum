@@ -1,6 +1,6 @@
 {
   "name": "dsh-forum",
-  "version": "0.20.0",
+  "version": "0.21.0-dev.0",
   "description": "forum-kb distribution bundle for DeepSeek Harness: one install wires the forum host service, the kb_* model tools and the web forum panel",
   "type": "module",
   "author": "chaosen315 (https://github.com/chaosen315)",
@@ -45,8 +45,8 @@
     }
   },
   "dependencies": {
-    "dsh-forum-kb": "0.20.0",
-    "dsh-forum-tool": "0.20.0",
-    "dsh-forum-ui": "0.20.0"
+    "dsh-forum-kb": "0.21.0-dev.0",
+    "dsh-forum-tool": "0.21.0-dev.0",
+    "dsh-forum-ui": "0.21.0-dev.0"
   }
 }

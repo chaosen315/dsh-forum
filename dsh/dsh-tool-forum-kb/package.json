@@ -1,7 +1,7 @@
 {
   "name": "dsh-forum-tool",
   "description": "forum-kb model tools for DeepSeek Harness: kb_query / kb_search / kb_view / kb_post / kb_claim / kb_answer / kb_comment / kb_summary etc.",
-  "version": "0.20.0",
+  "version": "0.21.0-dev.0",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
