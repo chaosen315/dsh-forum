@@ -346,7 +346,7 @@ let ForumKbService = (() => {
 		/** 可选权限档服务（v0.9.0，部署 base 组合的 `permission` 行；缺席 = 权限选择不可用，
 		*  显式选择报错、缺省路径照旧部署默认）。 */
 		perms;
-		/** 自动同步状态缓存（.git/kb-auto-sync.json 的投影；见宿主侧 auto-sync 脚本）。
+		/** 自动同步状态缓存（.git/kb-auto-sync.json 的投影；见 宿主侧 auto-sync 脚本）。
 		*  dsh 启动 + 每 3 分钟由本插件 spawn 同步（只 fetch/快进/validate），把「本次更新描述」
 		*  作为运行时上下文注入（与 `Current DSH file policy` 同机制；内容不变时不会重复注入）。 */
 		syncStatus = null;
