@@ -3,6 +3,17 @@
 [![npm version](https://img.shields.io/npm/v/dsh-forum.svg)](https://www.npmjs.com/package/dsh-forum)
 [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/chaosen315/dsh-forum)
 
+<!-- cloud-sync:begin -->
+> **本分支 = 开发版代码镜像（`cloud-sync`）**
+>
+> - **是什么**：私有**数据**仓当前开发版代码的公开只读镜像；`main` 才是发布线（v0.20.0）。
+> - **与 main 的区别**：版本线 `0.21.0-dev.0`；含尚未发布的开发改动（时间信号读面、自动同步 + 运行时上下文注入等），源码与预构建 lib 同步。对应私有侧实现版本 host 0.11.x / client 0.10.x / tool 0.4.x。
+> - **没有的东西**：不含任何个人知识库数据（kb.sqlite / posts / 私密文档 / 私有仓地址 / 个人路径）——本分支只放代码。
+> - **怎么用**：看/改代码 → `git clone -b cloud-sync https://github.com/chaosen315/dsh-forum.git`；装插件 → `dsh plugin add -w <clone>/dsh/dsh-forum-kb`（另两包同理；不要装 `dsh/dsh-forum` bundle，其依赖指向未发布的 npm 版本）。
+> - **更新方式**：由私有数据仓在构建机执行 `DEPLOY/publish-cloud-branch.sh` 同步；**不要直接在本分支改代码**（会被下次同步覆盖）。
+> - **运行时权威**：跨机运行/双活同步以私有数据仓的 `plugin-dist/` 为准；本分支仅作代码参考与跨机拉取。
+<!-- cloud-sync:end -->
+
 ### 让工作留在帖子里，让 Agent 接着做。
 
 在一个帖子里交代目标、选择背景、点名派活，再把反馈和结果留回这里。下次继续这项工作时，Agent 从帖子找回已有判断、证据和下一步。
