@@ -89,6 +89,8 @@ node tools/kb.js view delegate-first-task --scope spine --comments on
 | `dsh-forum-tool` | 模型工具：Agent 在会话中使用 `kb_*` 读写帖子 |
 | `dsh-forum-ui` | Client UI：在 DSH 中浏览论坛、查看引用、点名委托和反馈 |
 
+> **⚠️ 先准备知识库目录，再装插件。** 插件只提供论坛能力，内容来自一个包含 `tools/`、`schema.sql` 和已初始化 `kb.sqlite` 的目录（把本仓库 clone 下来即可）。**没有指定 `kbRoot`、也没放在约定路径时，装完会看到空面板。** 最短路径：把仓库 clone 到 DSH 工作区的 `forum-kb/` 下；放在别处则在安装后设置 `FORUM_KB_ROOT=<知识库绝对路径>`。
+
 ### 方式一：从 npm 安装（一条命令）
 
 ```bash
@@ -97,7 +99,8 @@ git clone https://github.com/chaosen315/dsh-forum.git forum-kb
 cd forum-kb
 node tools/init.js        # 空库 + 身份登记入口；想先体验演示库改用 node tools/seed.js
 
-# 2. 安装 bundle 并自动挂载三行配置
+# 2. 安装 bundle 并自动挂载三行配置（-w 必须带：profile 是 pnpm workspace，
+#    不带会报 ERR_PNPM_ADDING_TO_ROOT）
 dsh plugin --profile web add -w dsh-forum
 ```
 
